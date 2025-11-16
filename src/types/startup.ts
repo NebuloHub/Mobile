@@ -1,4 +1,4 @@
-import { Usuario } from "./usuario";
+import { UsuarioModel } from "./usuario";
 
 export interface Startup {
   CNPJ: string;
@@ -8,5 +8,5 @@ export interface Startup {
   Descricao?: string;
   Nome_responsavel: string;
   Email_startup: string;
-  Usuario: Usuario; 
+  Usuario: UsuarioModel; 
 }

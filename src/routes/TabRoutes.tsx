@@ -1,18 +1,31 @@
+// src/navigation/TabRoutes.tsx
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Home from "../screens/Home";
+import HomeScreen from "../screens/Home";
 import InfoScreen from "../screens/Info";
+import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
 export default function TabRoutes() {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="Home" component={Home} options={{ title: "Início" }} />
+    <Tab.Navigator>
       <Tab.Screen
-        name="Info"
-        component={InfoScreen}
-        options={{ title: "Info" }}
+        name="Home"
+        component={HomeScreen}
+        options={{
+          tabBarLabel: "Início",
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? "home" : "home-outline"}
+              size={size}
+              color={color}
+            />
+          ),
+          tabBarActiveTintColor: "#007AFF",
+          tabBarInactiveTintColor: "#8e8e8f",
+        }}
       />
+      <Tab.Screen name="Info" component={InfoScreen} />
     </Tab.Navigator>
   );
 }

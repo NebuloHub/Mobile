@@ -2,7 +2,7 @@ import { View, Text, Button, StyleSheet } from "react-native";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Home({ navigation }: any) {
-  const { logout } = useAuth();
+  const { signOut } = useAuth();
 
   return (
     <View style={styles.container}>
@@ -13,7 +13,7 @@ export default function Home({ navigation }: any) {
         onPress={() => navigation.navigate("Info")}
       />
 
-      <Button title="Logout" color="red" onPress={logout} />
+      <Button title="Logout" color="red" onPress={signOut} />
     </View>
   );
 }

@@ -14,6 +14,10 @@ export default function App() {
 }
 
 function MainNavigator() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  // Evita piscar telas enquanto carrega AsyncStorage
+  if (loading) return null;
+
   return user ? <AppStack /> : <AuthStack />;
 }

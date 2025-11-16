@@ -1,0 +1,11 @@
+{
+    "logs":{
+        "errorInvalidcredentials":"Credenciais inválidas"
+    },
+    "home":{
+        "title":"Bem Vindo"
+    },
+    "components":{
+        "titleLanguage":"Linguagem"
+    }
+}
