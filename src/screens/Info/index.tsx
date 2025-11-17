@@ -1,10 +1,13 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
-export default function InfoScreen() {
+export default function InfoScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Informações Gerais</Text>
       <Text style={styles.text}>Aqui ficam informações genéricas do app.</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('Teste', { userId: '123', name: 'Erick' })}>
+        <Text>Teste AQUI</Text>
+      </TouchableOpacity>
     </View>
   );
 }

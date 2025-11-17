@@ -117,7 +117,6 @@ export default function RegisterScreen({ navigation }: any) {
       </View>
 
       <View>
-
         {/* CPF */}
         <View>
           <Text>CPF</Text>

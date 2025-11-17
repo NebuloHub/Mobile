@@ -1,12 +1,31 @@
-import { UsuarioModel } from "./usuario";
+import { AvaliacaoResponse } from "./avaliacao";
+import { Habilidade } from "./habilidade";
+import { UserResponse } from "./usuario";
 
-export interface Startup {
-  CNPJ: string;
-  Video?: string;
-  Nome_startup: string;
-  Site?: string;
-  Descricao?: string;
-  Nome_responsavel: string;
-  Email_startup: string;
-  Usuario: UsuarioModel; 
+
+export interface AllStartupsResponse {
+  cnpj: string;
+  nomeStartup: string;
+  video?: string;
+  emailStartup: string;
+  links: {
+    self: string;
+  };
+}
+
+export interface StartupResponse{
+  cnpj: string;
+  video?: string;
+  nomeStartup: string;
+  site:string;
+  descricao:string;
+  nomeResponsavel:UserResponse["nome"];
+  emailStartup: string;
+  usuarioCPF:UserResponse["cpf"];
+  habilidades:Habilidade[];
+  avaliacoes:AvaliacaoResponse[];
+}
+
+export interface StartupDetailsParams {
+  cnpj: StartupResponse["cnpj"];
 }

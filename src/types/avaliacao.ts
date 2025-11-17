@@ -1,10 +1,21 @@
-import { Startup } from "./startup";
-import { Usuario } from "./usuario";
+import { StartupResponse } from "./startup";
+import { UsuarioFull } from "./usuario";
 
-export interface Avaliacao{
+
+export interface AllAvaliacaoResponse{
     id_avaliacao:number;
     nota:number;
-    Comentário?:string;
-    Usuario:Usuario;
-    Startup:Startup;
+    comentario?:string;
+    links:{
+        self: string;
+    }
+}
+
+export interface AvaliacaoResponse{
+    id_avaliacao:number;
+    nota:number;
+    comentario?:string;
+    UsuarioCPF?:UsuarioFull["cpf"];
+    Usuario:UsuarioFull;
+    StartupCNPJ:StartupResponse["cnpj"];
 }

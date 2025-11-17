@@ -1,8 +1,8 @@
-// src/navigation/TabRoutes.tsx
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../screens/Home";
 import InfoScreen from "../screens/Info";
-import { Ionicons } from '@expo/vector-icons';
+import TesteScreen from "../screens/Teste";
+import { Ionicons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 
