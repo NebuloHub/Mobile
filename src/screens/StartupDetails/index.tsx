@@ -4,10 +4,12 @@ import {
   Text,
   ActivityIndicator,
   ScrollView,
+  Image,
   StyleSheet,
   TouchableOpacity,
+  Linking,
 } from "react-native";
-import { Video, ResizeMode } from "expo-av";
+import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { AppStackParams } from "../../types/navigation";
@@ -16,31 +18,75 @@ import { getStartupByCNPJ } from "../../api/startup";
 
 type Props = NativeStackScreenProps<AppStackParams, "StartupDetails">;
 
+/* -------------------- COMPONENTE DE ESTRELAS -------------------- */
+const Stars = ({ value }: { value: number }) => {
+  const stars = [];
+  const full = Math.floor(value);
+  const half = value % 1 >= 0.5;
+
+  for (let i = 1; i <= 5; i++) {
+    if (i <= full) {
+      stars.push(<Ionicons key={`star-${i}`} name="star" size={18} color="#FFD700" />);
+    } else if (i === full + 1 && half) {
+      stars.push(<Ionicons key={`star-${i}`} name="star-half" size={18} color="#FFD700" />);
+    } else {
+      stars.push(
+        <Ionicons key={`star-${i}`} name="star-outline" size={18} color="#FFD700" />
+      );
+    }
+  }
+
+  return <View style={{ flexDirection: "row" }}>{stars}</View>;
+};
+
+/* ------------------- EXTRAI ID DO YOUTUBE ------------------- */
+function extractYT(url: string): string | null {
+  if (!url) return null;
+
+  const regex =
+    /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+
+  const match = url.match(regex);
+  return match ? match[1] : null;
+}
+
+/* ----------------------------- TELA ----------------------------- */
 export default function StartupDetails({ route, navigation }: Props) {
   const { cnpj } = route.params;
 
   const [startup, setStartup] = useState<StartupResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showAllAvaliacoes, setShowAllAvaliacoes] = useState(false);
 
+  const openLink = async (url?: string | null) => {
+    if (!url) return;
+    try {
+      const supported = await Linking.canOpenURL(url);
+      supported && (await Linking.openURL(url));
+    } catch (err) {
+      console.log("Erro ao abrir link:", err);
+    }
+  };
+
+  /* ------------------ CARREGA A STARTUP ------------------ */
   useEffect(() => {
-    const loadStartup = async () => {
+    const load = async () => {
       try {
         const data = await getStartupByCNPJ(cnpj);
         setStartup(data);
       } catch (err) {
-        console.error("Erro ao carregar startup:", err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
-
-    loadStartup();
+    load();
   }, [cnpj]);
 
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#007AFF" />
       </View>
     );
   }
@@ -53,98 +99,188 @@ export default function StartupDetails({ route, navigation }: Props) {
     );
   }
 
+  /* ------------------- THUMB DO YOUTUBE ------------------- */
+  const videoId = startup.video ? extractYT(startup.video) : null;
+
+  /* ------------------- MÉDIA DE AVALIAÇÃO ------------------- */
+  const media =
+    startup?.avaliacoes && startup.avaliacoes.length > 0
+      ? startup.avaliacoes.reduce((acc, a) => acc + a.nota, 0) /
+        startup.avaliacoes.length
+      : 0;
+
   return (
     <ScrollView style={styles.container}>
-      {/* Vídeo */}
-      {startup.video ? (
-        <Video
-          source={{ uri: startup.video }}
-          style={styles.video}
-          resizeMode={ResizeMode.COVER}
-          shouldPlay={false}
-        />
+      {/* ------------------ VÍDEO ------------------ */}
+      {videoId ? (
+        <TouchableOpacity onPress={() => openLink(startup.video)}>
+          <Image
+            source={{
+              uri: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+            }}
+            style={styles.thumbnail}
+          />
+        </TouchableOpacity>
       ) : (
-        <View style={styles.noVideo}>
-          <Text>Sem vídeo disponível</Text>
+        <Image
+          source={require("../../../assets/placeholders/video.png")}
+          style={styles.thumbnail}
+        />
+      )}
+
+      {/* ------------------ NOME ------------------ */}
+      <Text style={styles.title}>{startup.nomeStartup}</Text>
+      <Text style={styles.desc}>{startup.descricao}</Text>
+
+      {/* ------------------ SITE ------------------ */}
+      {startup.site && (
+        <TouchableOpacity onPress={() => openLink(startup.site)}>
+          <Text style={styles.siteLink}>{startup.site}</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* ------------------ HABILIDADES ------------------ */}
+      {startup.habilidades?.length > 0 && (
+        <View style={{ marginTop: 22 }}>
+          <Text style={styles.section}>Habilidades</Text>
+
+          <View style={styles.skillsContainer}>
+            {startup.habilidades.map((hab) => (
+              <View key={hab.id_habilidade} style={styles.skillBadge}>
+                <Text style={styles.skillName}>{hab.nome_habilidade}</Text>
+                <Text style={styles.skillType}>{hab.tipo_habilidade}</Text>
+              </View>
+            ))}
+          </View>
         </View>
       )}
 
-      {/* Informações da Startup */}
-      <Text style={styles.title}>
-        {startup.nomeStartup ?? "Nome não disponível"}
-      </Text>
-      <Text style={styles.desc}>
-        {startup.descricao ?? "Descrição não disponível"}
-      </Text>
-
-      {/* Habilidades */}
-      <Text style={styles.section}>Habilidades</Text>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Text>Volta ai man</Text>
-      </TouchableOpacity>
-      <View style={styles.tags}>
-        {startup.habilidades.map((h, index) => (
-          <View
-            key={h.id_habilidade?.toString() ?? index.toString()}
-            style={styles.tag}
-          >
-            <Text style={styles.tagText}>
-              {h.nome_habilidade ?? "Sem nome"}
-            </Text>
-          </View>
-        ))}
-      </View>
-
-      {/* Avaliações */}
-      <Text>{startup.video}</Text>
+      {/* ------------------ AVALIAÇÕES ------------------ */}
       <Text style={styles.section}>Avaliações</Text>
-      {startup.avaliacoes.length === 0 ? (
-        <Text>Nenhuma avaliação ainda.</Text>
+
+      {startup.avaliacoes?.length ? (
+        <View style={{ marginTop: 8 }}>
+          <Text style={styles.subtitle}>Avaliação Geral</Text>
+          <Stars value={media / 2} />
+          <Text style={{ marginTop: 4 }}>
+            {media.toFixed(1)} / 10 ({startup.avaliacoes.length} avaliações)
+          </Text>
+
+          {!showAllAvaliacoes && (
+            <TouchableOpacity
+              onPress={() => setShowAllAvaliacoes(true)}
+              style={{ marginTop: 10 }}
+            >
+              <Text style={styles.showMore}>Ver Mais</Text>
+            </TouchableOpacity>
+          )}
+
+          {showAllAvaliacoes &&
+            startup.avaliacoes.map((a, index) => (
+              <View key={a.id_avaliacao ?? `aval-${index}`} style={styles.avaliacaoBox}>
+                <Text style={styles.avaliadorName}>
+                  {a.Usuario?.nome ?? "Usuário"}
+                </Text>
+                <Stars value={a.nota / 2} />
+                <Text style={styles.avaliacaoComentario}>
+                  {a.comentario || "Sem comentário"}
+                </Text>
+              </View>
+            ))}
+        </View>
       ) : (
-        startup.avaliacoes.map((a, index) => (
-          <View
-            key={a.id_avaliacao?.toString() ?? index.toString()}
-            style={styles.avaliacao}
-          >
-            <Text style={styles.avaliador}>{a.Usuario?.nome ?? "Anônimo"}</Text>
-            <Text>{a.comentario || "Sem comentário"}</Text>
-          </View>
-        ))
+        <Text>Nenhuma avaliação ainda.</Text>
       )}
+
+      {/* ------------------ VOLTAR ------------------ */}
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={styles.backButton}
+      >
+        <Text style={styles.backText}>Voltar</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
 
+/* ------------------------- STYLES ------------------------- */
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
-  video: { width: "100%", height: 220, borderRadius: 12 },
-  noVideo: {
+
+  center: { flex: 1, justifyContent: "center", alignItems: "center" },
+
+  thumbnail: {
     width: "100%",
-    height: 220,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#eee",
-    borderRadius: 12,
+    height: 200,
+    borderRadius: 10,
+    backgroundColor: "#ddd",
   },
-  title: { fontSize: 24, fontWeight: "bold", marginTop: 12 },
-  desc: { marginTop: 8, fontSize: 15, color: "#444" },
-  section: { marginTop: 20, fontSize: 18, fontWeight: "bold" },
-  tags: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },
-  tag: {
-    backgroundColor: "#007bff33",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    marginRight: 6,
-    marginBottom: 6,
+
+  title: { fontSize: 26, fontWeight: "bold", marginTop: 12 },
+
+  desc: { marginTop: 8, color: "#444", fontSize: 15 },
+
+  siteLink: {
+    marginTop: 8,
+    color: "#007AFF",
+    textDecorationLine: "underline",
   },
-  tagText: { color: "#007bff", fontSize: 12 },
-  avaliacao: {
+
+  section: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 22,
+  },
+
+  /* -------- SKILLS -------- */
+  skillsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: 10,
+  },
+
+  skillBadge: {
+    backgroundColor: "#e6f0ff",
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+  },
+
+  skillName: {
+    fontWeight: "600",
+    fontSize: 14,
+  },
+
+  skillType: {
+    fontSize: 11,
+    opacity: 0.6,
+  },
+
+  /* -------- AVALIAÇÕES -------- */
+  subtitle: { fontWeight: "bold", marginBottom: 4 },
+
+  showMore: { color: "#007AFF", fontWeight: "bold" },
+
+  avaliacaoBox: {
     marginTop: 12,
     backgroundColor: "#f5f5f5",
     padding: 12,
     borderRadius: 8,
   },
-  avaliador: { fontWeight: "bold" },
-  center: { flex: 1, justifyContent: "center", alignItems: "center" },
+
+  avaliadorName: { fontWeight: "bold", fontSize: 15, marginBottom: 4 },
+
+  avaliacaoComentario: { marginTop: 4, color: "#333" },
+
+  /* -------- VOLTAR -------- */
+  backButton: {
+    marginTop: 25,
+    padding: 12,
+    backgroundColor: "#007AFF",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+
+  backText: { color: "#fff", fontWeight: "bold" },
 });
