@@ -15,7 +15,7 @@ import { UserResponse } from "../types/usuario";
 import { getUserByCPF } from "../api/usuario";
 
 interface Props {
-  data: AllStartupsResponse;
+  data: AllStartupsResponse | StartupResponse;
   onPress?: () => void;
 }
 

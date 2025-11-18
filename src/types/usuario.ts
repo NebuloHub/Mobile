@@ -9,6 +9,7 @@ export interface UsuarioAuth {
   nome: string;
   email: string;
   role: string;
+  cpf: string;
 }
 
 export interface AllUsersResponse {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,11 +10,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaskedTextInput } from "react-native-mask-text";
 import { registerStartup } from "../../api/startup";
-
 import { StartupRequest } from "../../types/startup";
 import LanguageToggleButton from "../../components/LanguageToggleButton";
+import { useAuth } from "../../context/AuthContext";
 
 export default function RegisterStartupScreen({ navigation }: any) {
+  const { user } = useAuth();
+
   // FORM STATES
   const [form, setForm] = useState<StartupRequest>({
     cnpj: "",
@@ -24,20 +26,29 @@ export default function RegisterStartupScreen({ navigation }: any) {
     descricao: "",
     nomeResponsavel: "",
     emailStartup: "",
-    usuarioCPF: "",
+    usuarioCPF: user?.cpf ?? "",
   });
 
-  // Erros visuais
+  // Erros do formulário
   const [errors, setErrors] = useState({
     cnpj: false,
     video: false,
     nomeStartup: false,
     site: false,
     descricao: false,
-    nomeResponsavel: false,
     emailStartup: false,
-    usuarioCPF: false,
   });
+
+  // Preenche automaticamente nomeResponsavel + CPF
+  useEffect(() => {
+    if (user) {
+      setForm((prev) => ({
+        ...prev,
+        nomeResponsavel: user.nome || "",
+        usuarioCPF: user.cpf || "",
+      }));
+    }
+  }, [user]);
 
   const updateField = (key: keyof StartupRequest, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -47,7 +58,6 @@ export default function RegisterStartupScreen({ navigation }: any) {
   // ----------------------
   // VALIDADORES
   // ----------------------
-
   function isValidEmail(email: string) {
     return /\S+@\S+\.\S+/.test(email);
   }
@@ -84,39 +94,25 @@ export default function RegisterStartupScreen({ navigation }: any) {
       newErrors.descricao = true;
       msg = "A descrição deve ter pelo menos 10 caracteres.";
     }
-    // Nome responsável
-    else if (!form.nomeResponsavel.trim()) {
-      newErrors.nomeResponsavel = true;
-      msg = "O nome do responsável é obrigatório.";
-    }
     // Email corporativo
     else if (!isValidEmail(form.emailStartup)) {
       newErrors.emailStartup = true;
       msg = "E-mail corporativo inválido.";
     }
-    // CPF usuário
-    else if (form.usuarioCPF.replace(/\D/g, "").length !== 11) {
-      newErrors.usuarioCPF = true;
-      msg = "CPF do usuário inválido.";
-    }
-    // Vídeo opcional (URL válida se preenchido)
+    // Vídeo opcional
     else if (form.video && !isValidURL(form.video)) {
       newErrors.video = true;
       msg = "URL do vídeo inválida.";
     }
 
     setErrors(newErrors);
+    if (msg) return Alert.alert("Erro", msg);
 
-    if (msg) {
-      Alert.alert("Erro", msg);
-      return;
-    }
-
-    // Payload final enviado
     const payload: StartupRequest = {
       ...form,
       cnpj: cnpjNumbers,
-      usuarioCPF: form.usuarioCPF.replace(/\D/g, ""),
+      usuarioCPF: form.usuarioCPF, // já vem correto do AuthContext
+      nomeResponsavel: form.nomeResponsavel, // também automático
     };
 
     console.log("📤 Enviando startup:", payload);
@@ -133,9 +129,7 @@ export default function RegisterStartupScreen({ navigation }: any) {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={{ padding: 20 }}>
-        <View>
-          <LanguageToggleButton />
-        </View>
+        <LanguageToggleButton />
 
         <Text style={{ fontSize: 22, fontWeight: "700", marginBottom: 20 }}>
           Registrar Startup
@@ -222,21 +216,6 @@ export default function RegisterStartupScreen({ navigation }: any) {
           />
         </Field>
 
-        {/* Nome do responsável */}
-        <Field label="Nome do Responsável" error={errors.nomeResponsavel}>
-          <TextInput
-            placeholder="Nome completo"
-            value={form.nomeResponsavel}
-            onChangeText={(t) => updateField("nomeResponsavel", t)}
-            style={{
-              borderWidth: 1,
-              padding: 10,
-              borderRadius: 8,
-              borderColor: errors.nomeResponsavel ? "red" : "#ccc",
-            }}
-          />
-        </Field>
-
         {/* Email corporativo */}
         <Field label="Email Corporativo" error={errors.emailStartup}>
           <TextInput
@@ -250,23 +229,6 @@ export default function RegisterStartupScreen({ navigation }: any) {
               padding: 10,
               borderRadius: 8,
               borderColor: errors.emailStartup ? "red" : "#ccc",
-            }}
-          />
-        </Field>
-
-        {/* CPF usuário */}
-        <Field label="CPF do Usuário" error={errors.usuarioCPF}>
-          <MaskedTextInput
-            mask="999.999.999-99"
-            keyboardType="numeric"
-            placeholder="000.000.000-00"
-            value={form.usuarioCPF}
-            onChangeText={(t) => updateField("usuarioCPF", t)}
-            style={{
-              borderWidth: 1,
-              padding: 10,
-              borderRadius: 8,
-              borderColor: errors.usuarioCPF ? "red" : "#ccc",
             }}
           />
         </Field>
@@ -297,7 +259,7 @@ export default function RegisterStartupScreen({ navigation }: any) {
   );
 }
 
-/* Componente simples de estrutura */
+/* Componente de layout */
 function Field({ label, error, children }: any) {
   return (
     <View style={{ marginBottom: 18 }}>
