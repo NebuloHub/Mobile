@@ -1,6 +1,6 @@
 // src/api/auth.service.ts
 import api from './api';
-import { UsuarioModel,LoginRequest, LoginResponse } from '../types/usuario';
+import { UserResponse,LoginRequest, LoginResponse } from '../types/usuario';
 
 
 export const login = async (data: LoginRequest): Promise<LoginResponse> => {
@@ -8,7 +8,7 @@ export const login = async (data: LoginRequest): Promise<LoginResponse> => {
   return response.data;
 };
 
-export const register = async (data: UsuarioModel) => {
+export const register = async (data: UserResponse) => {
   const response = await api.post("/Usuario", data);
   return response.data; 
 };

@@ -12,7 +12,7 @@ import {
   LoginRequest,
   LoginResponse,
   UsuarioAuth,
-  UsuarioModel,
+  UserResponse,
 } from "../types/usuario";
 
 interface AuthContextData {
@@ -21,7 +21,7 @@ interface AuthContextData {
   loading: boolean;
   signIn: (data: LoginRequest) => Promise<void>;
   signOut: () => Promise<void>;
-  signUp: (data: UsuarioModel) => Promise<void>;
+  signUp: (data: UserResponse) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextData | undefined>(undefined);
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // CADASTRO
-  const signUp = async (data: UsuarioModel) => {
+  const signUp = async (data: UserResponse) => {
     try {
       const resp = await register(data);
       return resp; // se precisar usar depois

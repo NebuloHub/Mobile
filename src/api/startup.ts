@@ -1,5 +1,5 @@
 import api from "./api";
-import { AllStartupsResponse, StartupResponse } from "../types/startup";
+import { AllStartupsResponse, StartupResponse, StartupRequest } from "../types/startup";
 
 export async function getAllStartups(): Promise<AllStartupsResponse[]> {
   const res = await api.get("/Startup");
@@ -9,5 +9,10 @@ export async function getAllStartups(): Promise<AllStartupsResponse[]> {
 
 export async function getStartupByCNPJ(cnpj: StartupResponse["cnpj"]): Promise<StartupResponse> {
   const res = await api.get(`/Startup/${cnpj}`);
+  return res.data;
+}
+
+export async function registerStartup(data: StartupRequest): Promise<StartupResponse> {
+  const res = await api.post("/Startup", data);
   return res.data;
 }

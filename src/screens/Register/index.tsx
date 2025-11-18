@@ -85,12 +85,12 @@ export default function RegisterScreen({ navigation }: any) {
     }
 
     const payload = {
-      CPF: form.cpf,
-      Nome: form.nome,
-      Email: form.email,
-      Senha: form.senha,
-      Role: form.role,
-      Telefone: form.telefone
+      cpf: form.cpf,
+      nome: form.nome,
+      email: form.email,
+      senha: form.senha,
+      role: form.role,
+      telefone: form.telefone
         ? Number(form.telefone.replace(/\D/g, ""))
         : 0,
     };

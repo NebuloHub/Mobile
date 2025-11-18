@@ -18,7 +18,6 @@ import { getStartupByCNPJ } from "../../api/startup";
 
 type Props = NativeStackScreenProps<AppStackParams, "StartupDetails">;
 
-/* -------------------- COMPONENTE DE ESTRELAS -------------------- */
 const Stars = ({ value }: { value: number }) => {
   const stars = [];
   const full = Math.floor(value);
@@ -39,7 +38,6 @@ const Stars = ({ value }: { value: number }) => {
   return <View style={{ flexDirection: "row" }}>{stars}</View>;
 };
 
-/* ------------------- EXTRAI ID DO YOUTUBE ------------------- */
 function extractYT(url: string): string | null {
   if (!url) return null;
 
@@ -50,13 +48,12 @@ function extractYT(url: string): string | null {
   return match ? match[1] : null;
 }
 
-/* ----------------------------- TELA ----------------------------- */
 export default function StartupDetails({ route, navigation }: Props) {
   const { cnpj } = route.params;
 
   const [startup, setStartup] = useState<StartupResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showAllAvaliacoes, setShowAllAvaliacoes] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const openLink = async (url?: string | null) => {
     if (!url) return;
@@ -68,7 +65,6 @@ export default function StartupDetails({ route, navigation }: Props) {
     }
   };
 
-  /* ------------------ CARREGA A STARTUP ------------------ */
   useEffect(() => {
     const load = async () => {
       try {
@@ -99,25 +95,21 @@ export default function StartupDetails({ route, navigation }: Props) {
     );
   }
 
-  /* ------------------- THUMB DO YOUTUBE ------------------- */
   const videoId = startup.video ? extractYT(startup.video) : null;
 
-  /* ------------------- MÉDIA DE AVALIAÇÃO ------------------- */
   const media =
     startup?.avaliacoes && startup.avaliacoes.length > 0
-      ? startup.avaliacoes.reduce((acc, a) => acc + a.nota, 0) /
-        startup.avaliacoes.length
+      ? startup.avaliacoes.reduce((acc, a) => acc + a.nota, 0) / startup.avaliacoes.length
       : 0;
+
+  const visibleAvaliacoes = expanded ? startup.avaliacoes : startup.avaliacoes.slice(0, 1);
 
   return (
     <ScrollView style={styles.container}>
-      {/* ------------------ VÍDEO ------------------ */}
       {videoId ? (
         <TouchableOpacity onPress={() => openLink(startup.video)}>
           <Image
-            source={{
-              uri: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
-            }}
+            source={{ uri: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` }}
             style={styles.thumbnail}
           />
         </TouchableOpacity>
@@ -128,34 +120,30 @@ export default function StartupDetails({ route, navigation }: Props) {
         />
       )}
 
-      {/* ------------------ NOME ------------------ */}
       <Text style={styles.title}>{startup.nomeStartup}</Text>
       <Text style={styles.desc}>{startup.descricao}</Text>
 
-      {/* ------------------ SITE ------------------ */}
       {startup.site && (
         <TouchableOpacity onPress={() => openLink(startup.site)}>
           <Text style={styles.siteLink}>{startup.site}</Text>
         </TouchableOpacity>
       )}
 
-      {/* ------------------ HABILIDADES ------------------ */}
       {startup.habilidades?.length > 0 && (
         <View style={{ marginTop: 22 }}>
           <Text style={styles.section}>Habilidades</Text>
 
           <View style={styles.skillsContainer}>
-            {startup.habilidades.map((hab) => (
-              <View key={hab.id_habilidade} style={styles.skillBadge}>
-                <Text style={styles.skillName}>{hab.nome_habilidade}</Text>
-                <Text style={styles.skillType}>{hab.tipo_habilidade}</Text>
+            {startup.habilidades.map((hab, index) => (
+              <View key={hab.idHabilidade ?? index} style={styles.skillBadge}>
+                <Text style={styles.skillName}>{hab.nomeHabilidade}</Text>
+                <Text style={styles.skillType}>{hab.tipoHabilidade}</Text>
               </View>
             ))}
           </View>
         </View>
       )}
 
-      {/* ------------------ AVALIAÇÕES ------------------ */}
       <Text style={styles.section}>Avaliações</Text>
 
       {startup.avaliacoes?.length ? (
@@ -166,33 +154,22 @@ export default function StartupDetails({ route, navigation }: Props) {
             {media.toFixed(1)} / 10 ({startup.avaliacoes.length} avaliações)
           </Text>
 
-          {!showAllAvaliacoes && (
-            <TouchableOpacity
-              onPress={() => setShowAllAvaliacoes(true)}
-              style={{ marginTop: 10 }}
-            >
-              <Text style={styles.showMore}>Ver Mais</Text>
-            </TouchableOpacity>
-          )}
-
-          {showAllAvaliacoes &&
-            startup.avaliacoes.map((a, index) => (
-              <View key={a.id_avaliacao ?? `aval-${index}`} style={styles.avaliacaoBox}>
-                <Text style={styles.avaliadorName}>
-                  {a.Usuario?.nome ?? "Usuário"}
-                </Text>
-                <Stars value={a.nota / 2} />
-                <Text style={styles.avaliacaoComentario}>
-                  {a.comentario || "Sem comentário"}
-                </Text>
-              </View>
-            ))}
+          {visibleAvaliacoes.map((a, index) => (
+            <View key={a.idAvaliacao ?? index} style={styles.avaliacaoBox}>
+              <Text style={styles.avaliadorName}>
+                {a.usuario?.nome ?? "Usuário"}
+              </Text>
+              <Stars value={a.nota / 2} />
+              <Text style={styles.avaliacaoComentario}>
+                {a.comentario || "Sem comentário"}
+              </Text>
+            </View>
+          ))}
         </View>
       ) : (
         <Text>Nenhuma avaliação ainda.</Text>
       )}
 
-      {/* ------------------ VOLTAR ------------------ */}
       <TouchableOpacity
         onPress={() => navigation.goBack()}
         style={styles.backButton}
@@ -203,7 +180,6 @@ export default function StartupDetails({ route, navigation }: Props) {
   );
 }
 
-/* ------------------------- STYLES ------------------------- */
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
 

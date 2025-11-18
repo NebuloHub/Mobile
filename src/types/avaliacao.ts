@@ -1,9 +1,8 @@
 import { StartupResponse } from "./startup";
-import { UsuarioFull } from "./usuario";
-
+import { UserResponse } from "./usuario";
 
 export interface AllAvaliacaoResponse{
-    id_avaliacao:number;
+    idAvaliacao:number;
     nota:number;
     comentario?:string;
     links:{
@@ -12,10 +11,10 @@ export interface AllAvaliacaoResponse{
 }
 
 export interface AvaliacaoResponse{
-    id_avaliacao:number;
+    idAvaliacao:number;
     nota:number;
     comentario?:string;
-    UsuarioCPF?:UsuarioFull["cpf"];
-    Usuario:UsuarioFull;
-    StartupCNPJ:StartupResponse["cnpj"];
+    usuarioCPF?:UserResponse["cpf"];
+    usuario:UserResponse;
+    startupCNPJ:StartupResponse["cnpj"];
 }

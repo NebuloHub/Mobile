@@ -26,6 +26,17 @@ export interface StartupResponse{
   avaliacoes:AvaliacaoResponse[];
 }
 
+export interface StartupRequest{
+  cnpj: string;
+  video?: string;
+  nomeStartup:string;
+  site:string;
+  descricao:string;
+  nomeResponsavel:string;
+  emailStartup:string;
+  usuarioCPF:string;
+}
+
 export interface StartupDetailsParams {
   cnpj: StartupResponse["cnpj"];
 }
