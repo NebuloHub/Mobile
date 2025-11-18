@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Picker } from "@react-native-picker/picker";
 import { MaskedTextInput } from "react-native-mask-text";
@@ -14,11 +8,8 @@ import { useAuth } from "../../context/AuthContext";
 import PasswordStrengthBar, {
   getPasswordStrength,
 } from "../../components/PasswordStrengthBar";
-import {
-  validateEmail,
-  validatePassword,
-} from "../../utils/validators";
-import LanguageToggleButton from '../../components/LanguageToggleButton';
+import { validateEmail, validatePassword } from "../../utils/validators";
+import LanguageToggleButton from "../../components/LanguageToggleButton";
 
 export default function RegisterScreen({ navigation }: any) {
   const { signUp } = useAuth();
@@ -85,14 +76,12 @@ export default function RegisterScreen({ navigation }: any) {
     }
 
     const payload = {
-      cpf: form.cpf,
+      cpf: form.cpf.replace(/\D/g, ""), 
       nome: form.nome,
       email: form.email,
       senha: form.senha,
       role: form.role,
-      telefone: form.telefone
-        ? Number(form.telefone.replace(/\D/g, ""))
-        : 0,
+      telefone: form.telefone ? Number(form.telefone.replace(/\D/g, "")) : 0,
     };
 
     console.log("📤 Enviando para API:", payload);
@@ -109,7 +98,7 @@ export default function RegisterScreen({ navigation }: any) {
   return (
     <SafeAreaView>
       <View>
-        <LanguageToggleButton/>
+        <LanguageToggleButton />
       </View>
 
       <View>
@@ -149,7 +138,7 @@ export default function RegisterScreen({ navigation }: any) {
 
         {/* Email */}
         <View>
-          <Text>Email</Text>  
+          <Text>Email</Text>
           <TextInput
             value={form.email}
             onChangeText={(t) => updateField("email", t)}
@@ -159,7 +148,6 @@ export default function RegisterScreen({ navigation }: any) {
             style={{
               borderWidth: 1,
               borderColor: errors.email ? "red" : "#ccc",
-
             }}
           />
         </View>
@@ -245,10 +233,7 @@ export default function RegisterScreen({ navigation }: any) {
 
       {/* Botão */}
       <View>
-
-        <TouchableOpacity
-          onPress={handleRegister}
-          >
+        <TouchableOpacity onPress={handleRegister}>
           <Text>Cadastrar</Text>
         </TouchableOpacity>
       </View>
