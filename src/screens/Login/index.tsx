@@ -18,7 +18,6 @@ import Field from "../../components/Field";
 import { isValidEmail } from "../../utils/validators";
 
 import { useTheme } from "../../context/ThemeContext";
-const { colors, toggleTheme } = useTheme();
 import { createGlobalStyles } from "../../styles/globalStyles";
 
 
