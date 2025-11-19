@@ -6,13 +6,13 @@ import AuthStack from "./src/routes/AuthStack";
 
 export default function App() {
   return (
-    <AuthProvider>
-      <SafeAreaProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
         <NavigationContainer>
           <MainNavigator />
         </NavigationContainer>
-        </SafeAreaProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }
 
