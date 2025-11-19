@@ -97,7 +97,7 @@ export default function RegisterScreen({ navigation }: any) {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView edges={["top", "bottom"]}>
       <ScrollView>
         <LanguageToggleButton />
 

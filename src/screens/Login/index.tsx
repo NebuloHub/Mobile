@@ -55,7 +55,7 @@ export default function LoginScreen({ navigation }: any) {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView edges={["top", "bottom"]}>
       <ScrollView>
         <LanguageToggleButton />
 

@@ -99,7 +99,7 @@ export default function RegisterStartupScreen({ navigation }: any) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView edges={["top", "bottom"]}>
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         <LanguageToggleButton />
 

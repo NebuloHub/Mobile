@@ -12,6 +12,7 @@ import StartupCard from "../../components/StartupCard";
 import { AllStartupsResponse } from "../../types/startup";
 import { useAuth } from "../../context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home({ navigation }: any) {
   const { signOut } = useAuth();
@@ -36,7 +37,7 @@ export default function Home({ navigation }: any) {
   };
 
   return (
-    <View>
+    <SafeAreaView edges={["top", "bottom"]}>
       <View>
         <View>
           <Text>NebuloHub</Text>
@@ -77,6 +78,6 @@ export default function Home({ navigation }: any) {
           )}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 }

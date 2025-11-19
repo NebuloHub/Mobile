@@ -10,10 +10,10 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-
 import { AppStackParams } from "../../types/navigation";
 import { StartupResponse } from "../../types/startup";
 import { getStartupByCNPJ } from "../../api/startup";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Props = NativeStackScreenProps<AppStackParams, "StartupDetails">;
 
@@ -104,76 +104,79 @@ export default function StartupDetails({ route, navigation }: Props) {
   const visibleAvaliacoes = expanded ? startup.avaliacoes : startup.avaliacoes.slice(0, 1);
 
   return (
-    <ScrollView>
-      {videoId ? (
-        <TouchableOpacity onPress={() => openLink(startup.video)}>
+    <SafeAreaView edges={["top", "bottom"]}>
+      <ScrollView>
+        {videoId ? (
+          <TouchableOpacity onPress={() => openLink(startup.video)}>
+            <Image
+              source={{ uri: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` }}
+            />
+          </TouchableOpacity>
+        ) : (
+          // Se você prefirir da pra trocar só para um texto falando que não tem vídeo
           <Image
-            source={{ uri: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` }}
+            source={require("../../../assets/placeholders/video.png")}
           />
-        </TouchableOpacity>
-      ) : (
-        // Se você prefirir da pra trocar só para um texto falando que não tem vídeo
-        <Image
-          source={require("../../../assets/placeholders/video.png")}
-        />
-      )}
+        )}
 
-      <Text>{startup.nomeStartup}</Text>
-      <Text>{startup.descricao}</Text>
+        <Text>{startup.nomeStartup}</Text>
+        <Text>{startup.descricao}</Text>
 
-      {startup.site && (
-        <TouchableOpacity onPress={() => openLink(startup.site)}>
-          <Text >{startup.site}</Text>
-        </TouchableOpacity>
-      )}
+        {startup.site && (
+          <TouchableOpacity onPress={() => openLink(startup.site)}>
+            <Text >{startup.site}</Text>
+          </TouchableOpacity>
+        )}
 
-      {startup.habilidades?.length > 0 && (
-        <View>
-          <Text>Habilidades</Text>
-
+        {startup.habilidades?.length > 0 && (
           <View>
-            {startup.habilidades.map((hab, index) => (
-              <View key={hab.idHabilidade ?? index}>
-                <Text>{hab.nomeHabilidade}</Text>
-                <Text>{hab.tipoHabilidade}</Text>
+            <Text>Habilidades</Text>
+
+            <View>
+              {startup.habilidades.map((hab, index) => (
+                <View key={hab.idHabilidade ?? index}>
+                  <Text>{hab.nomeHabilidade}</Text>
+                  <Text>{hab.tipoHabilidade}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        <Text>Avaliações</Text>
+
+        {startup.avaliacoes?.length ? (
+          <View>
+            <Text>Avaliação Geral</Text>
+            <Stars value={media / 2} />
+            <Text style={{ marginTop: 4 }}>
+              {media.toFixed(1)} / 10 ({startup.avaliacoes.length} avaliações)
+            </Text>
+
+            {visibleAvaliacoes.map((a, index) => (
+              <View key={a.idAvaliacao ?? index}>
+                <Text>
+                  {a.usuario?.nome ?? "Usuário"}
+                </Text>
+                <Stars value={a.nota / 2} />
+                <Text >
+                  {a.comentario || "Sem comentário"}
+                </Text>
               </View>
             ))}
           </View>
-        </View>
-      )}
+        ) : (
+          <Text>Nenhuma avaliação ainda.</Text>
+        )}
 
-      <Text>Avaliações</Text>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+        >
+          <Text>Voltar</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
 
-      {startup.avaliacoes?.length ? (
-        <View>
-          <Text>Avaliação Geral</Text>
-          <Stars value={media / 2} />
-          <Text style={{ marginTop: 4 }}>
-            {media.toFixed(1)} / 10 ({startup.avaliacoes.length} avaliações)
-          </Text>
-
-          {visibleAvaliacoes.map((a, index) => (
-            <View key={a.idAvaliacao ?? index}>
-              <Text>
-                {a.usuario?.nome ?? "Usuário"}
-              </Text>
-              <Stars value={a.nota / 2} />
-              <Text >
-                {a.comentario || "Sem comentário"}
-              </Text>
-            </View>
-          ))}
-        </View>
-      ) : (
-        <Text>Nenhuma avaliação ainda.</Text>
-      )}
-
-      <TouchableOpacity
-        onPress={() => navigation.goBack()}
-      >
-        <Text>Voltar</Text>
-      </TouchableOpacity>
-    </ScrollView>
   );
 }
 

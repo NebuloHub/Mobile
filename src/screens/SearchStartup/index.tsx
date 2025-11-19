@@ -4,6 +4,7 @@ import { getAllStartups } from "../../api/startup";
 import { AllStartupsResponse } from "../../types/startup";
 import SearchStartupItem from "../../components/SearchStartupItem";
 import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SearchStartupScreen({ navigation }: any) {
   const [startups, setStartups] = useState<AllStartupsResponse[]>([]);
@@ -57,7 +58,7 @@ export default function SearchStartupScreen({ navigation }: any) {
   }
 
   return (
-    <View>
+    <SafeAreaView edges={["top", "bottom"]}>
       <View>
         <View>
           <TouchableOpacity onPress={loadStartups}>
@@ -91,6 +92,6 @@ export default function SearchStartupScreen({ navigation }: any) {
           <Text>Nenhuma startup encontrada</Text>
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }
