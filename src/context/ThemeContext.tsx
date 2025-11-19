@@ -10,22 +10,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const themeColors = {
   light: {
-    background: "#fff",
-    text: "#000",
-    button: "#007bff",
-    buttonText: "#fff",
-    border: "#000",
-    titulo: "#fff",
-    popUp: "#E4E4E4FF",
+    background: '#fff',
+    text: '#000',
+    buttonText: '#fff',
+    titulo: '#000000',
+    borda: '#000000',
   },
   dark: {
-    background: "#373737",
-    text: "#fff",
-    button: "#0bf359ff",
-    buttonText: "#000",
-    border: "#fff",
-    titulo: "#373737",
-    popUp: "#272727",
+    background: '#212121',
+    text: '#5D5D5D',
+    buttonText: '#ffffff',
+    titulo: '#FFFBFBFF',
+    borda: '#5D5D5D',
   },
 };
 
