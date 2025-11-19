@@ -24,12 +24,26 @@ const Stars = ({ value }: { value: number }) => {
 
   for (let i = 1; i <= 5; i++) {
     if (i <= full) {
-      stars.push(<Ionicons key={`star-${i}`} name="star" size={18} color="#FFD700" />);
+      stars.push(
+        <Ionicons key={`star-${i}`} name="star" size={18} color="#FFD700" />
+      );
     } else if (i === full + 1 && half) {
-      stars.push(<Ionicons key={`star-${i}`} name="star-half" size={18} color="#FFD700" />);
+      stars.push(
+        <Ionicons
+          key={`star-${i}`}
+          name="star-half"
+          size={18}
+          color="#FFD700"
+        />
+      );
     } else {
       stars.push(
-        <Ionicons key={`star-${i}`} name="star-outline" size={18} color="#FFD700" />
+        <Ionicons
+          key={`star-${i}`}
+          name="star-outline"
+          size={18}
+          color="#FFD700"
+        />
       );
     }
   }
@@ -98,25 +112,32 @@ export default function StartupDetails({ route, navigation }: Props) {
 
   const media =
     startup?.avaliacoes && startup.avaliacoes.length > 0
-      ? startup.avaliacoes.reduce((acc, a) => acc + a.nota, 0) / startup.avaliacoes.length
+      ? startup.avaliacoes.reduce((acc, a) => acc + a.nota, 0) /
+        startup.avaliacoes.length
       : 0;
 
-  const visibleAvaliacoes = expanded ? startup.avaliacoes : startup.avaliacoes.slice(0, 1);
+  const visibleAvaliacoes = expanded
+    ? startup.avaliacoes
+    : startup.avaliacoes.slice(0, 1);
 
   return (
     <SafeAreaView edges={["top", "bottom"]}>
       <ScrollView>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="chevron-back-outline" size={18} color="#747474" />
+            <Text>Voltar</Text>
+        </TouchableOpacity>
         {videoId ? (
           <TouchableOpacity onPress={() => openLink(startup.video)}>
             <Image
-              source={{ uri: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` }}
+              source={{
+                uri: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+              }}
             />
           </TouchableOpacity>
         ) : (
           // Se você prefirir da pra trocar só para um texto falando que não tem vídeo
-          <Image
-            source={require("../../../assets/placeholders/video.png")}
-          />
+          <Image source={require("../../../assets/placeholders/video.png")} />
         )}
 
         <Text>{startup.nomeStartup}</Text>
@@ -124,7 +145,7 @@ export default function StartupDetails({ route, navigation }: Props) {
 
         {startup.site && (
           <TouchableOpacity onPress={() => openLink(startup.site)}>
-            <Text >{startup.site}</Text>
+            <Text>{startup.site}</Text>
           </TouchableOpacity>
         )}
 
@@ -155,28 +176,16 @@ export default function StartupDetails({ route, navigation }: Props) {
 
             {visibleAvaliacoes.map((a, index) => (
               <View key={a.idAvaliacao ?? index}>
-                <Text>
-                  {a.usuario?.nome ?? "Usuário"}
-                </Text>
+                <Text>{a.usuario?.nome ?? "Usuário"}</Text>
                 <Stars value={a.nota / 2} />
-                <Text >
-                  {a.comentario || "Sem comentário"}
-                </Text>
+                <Text>{a.comentario || "Sem comentário"}</Text>
               </View>
             ))}
           </View>
         ) : (
           <Text>Nenhuma avaliação ainda.</Text>
         )}
-
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-        >
-          <Text>Voltar</Text>
-        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
-
   );
 }
-
