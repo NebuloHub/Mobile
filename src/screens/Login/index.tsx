@@ -67,7 +67,7 @@ export default function LoginScreen({ navigation }: any) {
         <LanguageToggleButton/>
 
         <View style={{ alignItems: "center"}}>
-          <Text style={styles.titulo}>{t("home.title")}</Text>
+          <Text>{t("home.title")}</Text>
         </View>
 
         <View>

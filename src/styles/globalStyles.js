@@ -14,25 +14,15 @@ export const createGlobalStyles = (colors) =>
     },
 
 
-
-    titulo: {
-        color: colors.titulo,
-        fontSize: 36,
-        fontWeight: "bold",
-    },
-
-
     input: {
         borderWidth: 1,
         padding: 10,
         borderRadius: 8,
-        borderColor: colors.borda,
     },
 
     passwordContainer: {
         borderWidth: 1,
         borderRadius: 8,
-        borderColor: colors.borda,
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: 10,
