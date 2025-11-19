@@ -1,6 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, ViewStyle } from "react-native";
 
+import { globalStyles } from "../styles/global";
+
 interface FieldProps {
   label?: string;
   error?: string | boolean;
@@ -10,8 +12,12 @@ interface FieldProps {
 }
 
 export default function Field({ label, error, children, style, required }: FieldProps) {
+
+  const styles = globalStyles;
+
+
   return (
-    <View style={[styles.container, style]}>
+    <View style={[styles.caixa, style]}>
       {label && (
         <Text style={styles.label}>
           {label}
@@ -30,18 +36,4 @@ export default function Field({ label, error, children, style, required }: Field
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 15,
-    fontWeight: "500",
-    marginBottom: 6,
-  },
-  errorText: {
-    color: "red",
-    fontSize: 13,
-    marginTop: 4,
-  },
-});
+

@@ -14,12 +14,14 @@ export const themeColors = {
     text: '#000',
     buttonText: '#fff',
     borda: '#000000',
+    titulo: '#000000',
   },
   dark: {
     background: '#212121',
     text: '#5D5D5D',
     buttonText: '#ffffff',
     borda: '#5D5D5D',
+    titulo: '#FFFFFF',
   },
 };
 

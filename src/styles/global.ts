@@ -8,20 +8,28 @@ export const globalStyles = StyleSheet.create({
     //                      FORMS
     //----------------------------------------------------
 
+    pagina: {
+        backgroundColor: themeColors.dark.background,
+    },
+
+
     forms: {
         marginHorizontal: 20,
         paddingTop: 60,
-
-        // Importa assim meu mano
-        backgroundColor: themeColors.dark.background,
         gap:60,
     },
 
+    titulo: {
+        fontSize: 36,
+        fontWeight: "bold",
+        color: themeColors.dark.titulo,
+    },
 
     input: {
         borderWidth: 1,
         padding: 10,
         borderRadius: 8,
+        borderColor: themeColors.dark.borda,
     },
 
     passwordContainer: {
@@ -30,6 +38,7 @@ export const globalStyles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: 10,
+        borderColor: themeColors.dark.borda,
     },
 
 
@@ -66,5 +75,27 @@ export const globalStyles = StyleSheet.create({
     textLinguagem: {
         fontSize: 15,
         fontWeight: "bold",
-    }
+    },
+
+    //----------------------------------------------------
+    //                  Componete Field
+    //----------------------------------------------------
+
+    caixa: {
+        marginBottom: 16,
+    },
+    label: {
+        fontSize: 15,
+        fontWeight: "500",
+        marginBottom: 6,
+        color: themeColors.dark.titulo,
+    },
+    errorText: {
+        color: "red",
+        fontSize: 13,
+        marginTop: 4,
+    },
+
+
+
 })

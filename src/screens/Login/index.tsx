@@ -59,18 +59,18 @@ export default function LoginScreen({ navigation }: any) {
   };
 
   return (
-    <SafeAreaView edges={["top", "bottom"]} >
+    <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
       <ScrollView contentContainerStyle={styles.forms}>
         <LanguageToggleButton/>
 
         <View style={{ alignItems: "center"}}>
-          <Text>{t("home.title")}</Text>
+          <Text style={styles.titulo}>{t("home.title")}</Text>
         </View>
 
         <View>
 
           <Field label="Email" error={errors.email}>
-            <TextInput
+            <TextInput 
               placeholder="Digite aqui seu email"
               value={email}
               onChangeText={(t) => {
@@ -113,8 +113,8 @@ export default function LoginScreen({ navigation }: any) {
             </View>
           </Field>
 
-          <View style={styles.button}>
-            <TouchableOpacity onPress={handleLogin}>
+          <View >
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
               <Text>Entrar</Text>
             </TouchableOpacity>
           </View>
@@ -122,8 +122,8 @@ export default function LoginScreen({ navigation }: any) {
         </View>
 
 
-        <View style={styles.outroButton}>
-          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+        <View >
+          <TouchableOpacity style={styles.outroButton} onPress={() => navigation.navigate("Register")}>
             <Text>Criar nova conta</Text>
           </TouchableOpacity>
         </View>
