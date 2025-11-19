@@ -1,10 +1,8 @@
-import { useTheme } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
+import { themeColors } from "../context/ThemeContext";
 
 
-export const createGlobalStyles = (colors : any) =>
-
-    StyleSheet.create({
+export const globalStyles = StyleSheet.create({
 
     //----------------------------------------------------
     //                      FORMS
@@ -14,6 +12,8 @@ export const createGlobalStyles = (colors : any) =>
         marginHorizontal: 20,
         paddingTop: 60,
 
+        // Importa assim meu mano
+        backgroundColor: themeColors.dark.background,
         gap:60,
     },
 
@@ -66,6 +66,5 @@ export const createGlobalStyles = (colors : any) =>
     textLinguagem: {
         fontSize: 15,
         fontWeight: "bold",
-    },
-
-});
+    }
+})
