@@ -1,5 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppStack from "./AppStack";
 import AuthStack from "./AuthStack";
 import LoadingScreen from "../screens/LoadingScreen";
@@ -10,8 +11,10 @@ export default function RootNavigator() {
   if (loading) return <LoadingScreen />;
 
   return (
-    <NavigationContainer>
-      {user ? <AppStack /> : <AuthStack />}
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        {user ? <AppStack /> : <AuthStack />}
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
