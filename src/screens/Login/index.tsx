@@ -17,12 +17,20 @@ import { t } from "../../i18n";
 import Field from "../../components/Field";
 import { isValidEmail } from "../../utils/validators";
 
+import { useTheme } from "../../context/ThemeContext";
+const { colors, toggleTheme } = useTheme();
+import { createGlobalStyles } from "../../styles/globalStyles";
+
+
 export default function LoginScreen({ navigation }: any) {
   const { user, signIn } = useAuth();
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [showSenha, setShowSenha] = useState(false);
+
+  const { colors, toggleTheme } = useTheme();
+  const styles = createGlobalStyles(colors);
 
   const [errors, setErrors] = useState({
     email: false,
@@ -55,87 +63,79 @@ export default function LoginScreen({ navigation }: any) {
   };
 
   return (
-    <SafeAreaView edges={["top", "bottom"]}>
-      <ScrollView>
-        <LanguageToggleButton />
+    <SafeAreaView edges={["top", "bottom"]} >
+      <ScrollView contentContainerStyle={styles.forms}>
+        <LanguageToggleButton/>
 
-        <View>
-          <Text>{t("home.title")}</Text>
+        <View style={{ alignItems: "center"}}>
+          <Text style={styles.titulo}>{t("home.title")}</Text>
         </View>
 
-        <Field label="Email" error={errors.email}>
-          <TextInput
-            placeholder="Digite aqui seu email"
-            value={email}
-            onChangeText={(t) => {
-              setEmail(t);
-              setErrors((prev) => ({ ...prev, email: false }));
-            }}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            style={[
-              styles.input,
-              errors.email && { borderColor: "red" },
-            ]}
-          />
-        </Field>
+        <View>
 
-        <Field label="Senha" error={errors.senha}>
-          <View
-            style={[
-              styles.passwordContainer,
-              errors.senha && { borderColor: "red" },
-            ]}
-          >
+          <Field label="Email" error={errors.email}>
             <TextInput
-              placeholder="Digite aqui sua senha"
-              secureTextEntry={!showSenha}
-              value={senha}
+              placeholder="Digite aqui seu email"
+              value={email}
               onChangeText={(t) => {
-                setSenha(t);
-                setErrors((prev) => ({ ...prev, senha: false }));
+                setEmail(t);
+                setErrors((prev) => ({ ...prev, email: false }));
               }}
-              style={{ flex: 1 }}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              style={[
+                styles.input,
+                errors.email && { borderColor: "red" },
+              ]}
             />
+          </Field>
 
-            <TouchableOpacity onPress={() => setShowSenha(!showSenha)}>
-              <Ionicons
-                name={showSenha ? "eye-off-outline" : "eye-outline"}
-                size={22}
+          <Field label="Senha" error={errors.senha}>
+            <View
+              style={[
+                styles.passwordContainer,
+                errors.senha && { borderColor: "red" },
+              ]}
+            >
+              <TextInput
+                placeholder="Digite aqui sua senha"
+                secureTextEntry={!showSenha}
+                value={senha}
+                onChangeText={(t) => {
+                  setSenha(t);
+                  setErrors((prev) => ({ ...prev, senha: false }));
+                }}
+                style={{ flex: 1 }}
               />
+
+              <TouchableOpacity onPress={() => setShowSenha(!showSenha)}>
+                <Ionicons
+                  name={showSenha ? "eye-off-outline" : "eye-outline"}
+                  size={22}
+                />
+              </TouchableOpacity>
+            </View>
+          </Field>
+
+          <View style={styles.button}>
+            <TouchableOpacity onPress={handleLogin}>
+              <Text>Entrar</Text>
             </TouchableOpacity>
           </View>
-        </Field>
 
-        <View>
-          <TouchableOpacity onPress={handleLogin}>
-            <Text>Entrar</Text>
-          </TouchableOpacity>
         </View>
 
-        <View>
+
+        <View style={styles.outroButton}>
           <TouchableOpacity onPress={() => navigation.navigate("Register")}>
             <Text>Criar nova conta</Text>
           </TouchableOpacity>
         </View>
+
+
+        
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  input: {
-    borderWidth: 1,
-    padding: 10,
-    borderRadius: 8,
-    borderColor: "#ccc",
-  },
-  passwordContainer: {
-    borderWidth: 1,
-    borderRadius: 8,
-    borderColor: "#ccc",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-  },
-});

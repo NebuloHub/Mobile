@@ -4,8 +4,13 @@ import { Ionicons } from '@expo/vector-icons';
 import i18n, { setLocale } from "../i18n";
 import { t } from '../i18n'
 
+import { createGlobalStyles } from "../styles/globalStyles";
+
 export default function LanguageSelector() {
   const [open, setOpen] = useState(false);
+
+  const styles = createGlobalStyles();
+
 
   const langs = [
     { code: "pt", label: "Português (BR)" },
@@ -19,9 +24,9 @@ export default function LanguageSelector() {
   };
 
   return (
-    <View >
-      <TouchableOpacity onPress={() => setOpen(!open)}>
-        <Text>{t('components.titleLanguage')}</Text>
+    <View style={styles.corpoLinguagem}>
+      <TouchableOpacity style={styles.linguagem} onPress={() => setOpen(!open)}>
+        <Text style={styles.textLinguagem}>{t('components.titleLanguage')}</Text>
         <Ionicons
             name="chevron-down-outline"
             size={24}
