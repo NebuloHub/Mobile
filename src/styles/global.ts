@@ -131,6 +131,17 @@ export const globalStyles = StyleSheet.create({
         marginTop: 4,
     },
 
+    //----------------------------------------------------
+    //                  Resgisto Startup
+    //----------------------------------------------------
 
-
+    textArea: {
+        height: 120,
+        borderWidth: 1,
+        padding: 10,
+        borderRadius: 8,
+        textAlignVertical: "top",
+        borderColor: themeColors.dark.borda,
+        color: themeColors.dark.text,
+    }
 })

@@ -17,8 +17,12 @@ import { useAuth } from "../../context/AuthContext";
 import { isValidEmail, isValidURL } from "../../utils/validators";
 import Field from "../../components/Field";
 
+import { globalStyles } from "../../styles/global";
+
 export default function RegisterStartupScreen({ navigation }: any) {
   const { user } = useAuth();
+
+    const styles = globalStyles;
 
   const [form, setForm] = useState<StartupRequest>({
     cnpj: "",
@@ -99,113 +103,111 @@ export default function RegisterStartupScreen({ navigation }: any) {
   };
 
   return (
-    <SafeAreaView edges={["top", "bottom"]}>
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
+    <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
+      <ScrollView contentContainerStyle={styles.forms}>
         <LanguageToggleButton />
 
-        <Text>Cadastro Startup</Text>
+        <View style={{ alignItems: "center"}}>
+          <Text style={styles.titulo}>Cadastro Startup</Text>
+        </View>
 
-        {/* CNPJ */}
-        <Field label="CNPJ" error={errors.cnpj}>
-          <MaskedTextInput
-            mask="99.999.999/9999-99"
-            keyboardType="numeric"
-            placeholder="Digite aqui o CNPJ da startup"
-            value={form.cnpj}
-            onChangeText={(t) => updateField("cnpj", t)}
-            style={[
-              styles.input,
-              errors.cnpj && { borderColor: "red" },
-            ]}
-          />
-        </Field>
+        <View style={styles.formCorpo}>
 
-        <Field label="Vídeo Pitch (opcional)" error={errors.video}>
-          <TextInput
-            placeholder="URL do Pitch (YouTube, Loom, etc.)"
-            value={form.video}
-            onChangeText={(t) => updateField("video", t)}
-            style={[
-              styles.input,
-              errors.video && { borderColor: "red" },
-            ]}
-          />
-        </Field>
+          {/* CNPJ */}
+          <Field label="CNPJ" error={errors.cnpj}>
+            <MaskedTextInput
+              mask="99.999.999/9999-99"
+              placeholderTextColor="#888"
+              keyboardType="numeric"
+              placeholder="Digite aqui o CNPJ da startup"
+              value={form.cnpj}
+              onChangeText={(t) => updateField("cnpj", t)}
+              style={[
+                styles.input,
+                errors.cnpj && { borderColor: "red" },
+              ]}
+            />
+          </Field>
 
-        <Field label="Nome da Startup" error={errors.nomeStartup}>
-          <TextInput
-            placeholder="Digite o nome da startup"
-            value={form.nomeStartup}
-            onChangeText={(t) => updateField("nomeStartup", t)}
-            style={[
-              styles.input,
-              errors.nomeStartup && { borderColor: "red" },
-            ]}
-          />
-        </Field>
+          <Field label="Vídeo Pitch (opcional)" error={errors.video}>
+            <TextInput
+              placeholder="URL do Pitch (YouTube, Loom, etc.)"
+              placeholderTextColor="#888"
+              value={form.video}
+              onChangeText={(t) => updateField("video", t)}
+              style={[
+                styles.input,
+                errors.video && { borderColor: "red" },
+              ]}
+            />
+          </Field>
 
-        {/* Site */}
-        <Field label="Site" error={errors.site}>
-          <TextInput
-            placeholder="https://sua-startup.com"
-            value={form.site}
-            onChangeText={(t) => updateField("site", t)}
-            autoCapitalize="none"
-            style={[
-              styles.input,
-              errors.site && { borderColor: "red" },
-            ]}
-          />
-        </Field>
+          <Field label="Nome da Startup" error={errors.nomeStartup}>
+            <TextInput
+              placeholder="Digite o nome da startup"
+              placeholderTextColor="#888"
+              value={form.nomeStartup}
+              onChangeText={(t) => updateField("nomeStartup", t)}
+              style={[
+                styles.input,
+                errors.nomeStartup && { borderColor: "red" },
+              ]}
+            />
+          </Field>
 
-        <Field label="Descrição" error={errors.descricao}>
-          <TextInput
-            placeholder="Descreva sua startup"
-            value={form.descricao}
-            multiline
-            onChangeText={(t) => updateField("descricao", t)}
-            style={[
-              styles.textArea,
-              errors.descricao && { borderColor: "red" },
-            ]}
-          />
-        </Field>
+          {/* Site */}
+          <Field label="Site" error={errors.site}>
+            <TextInput
+              placeholder="https://sua-startup.com"
+              placeholderTextColor="#888"
+              value={form.site}
+              onChangeText={(t) => updateField("site", t)}
+              autoCapitalize="none"
+              style={[
+                styles.input,
+                errors.site && { borderColor: "red" },
+              ]}
+            />
+          </Field>
 
-        <Field label="Email Corporativo" error={errors.emailStartup}>
-          <TextInput
-            placeholder="email@suaempresa.com"
-            value={form.emailStartup}
-            onChangeText={(t) => updateField("emailStartup", t)}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            style={[
-              styles.input,
-              errors.emailStartup && { borderColor: "red" },
-            ]}
-          />
-        </Field>
+          <Field label="Descrição" error={errors.descricao}>
+            <TextInput
+              placeholder="Descreva sua startup"
+              placeholderTextColor="#888"
+              value={form.descricao}
+              multiline
+              onChangeText={(t) => updateField("descricao", t)}
+              style={[
+                styles.textArea,
+                errors.descricao && { borderColor: "red" },
+              ]}
+            />
+          </Field>
 
-        <TouchableOpacity onPress={handleRegister}>
-          <Text>Registrar</Text>
-        </TouchableOpacity>
+          <Field label="Email Corporativo" error={errors.emailStartup}>
+            <TextInput
+              placeholder="email@suaempresa.com"
+              placeholderTextColor="#888"
+              value={form.emailStartup}
+              onChangeText={(t) => updateField("emailStartup", t)}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              style={[
+                styles.input,
+                errors.emailStartup && { borderColor: "red" },
+              ]}
+            />
+          </Field>
+
+          <TouchableOpacity style={styles.button} onPress={handleRegister}>
+            <Text style={styles.textButton}>Registrar</Text>
+          </TouchableOpacity>
+
+        </View>
+
+        
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  input: {
-    borderWidth: 1,
-    padding: 10,
-    borderRadius: 8,
-    borderColor: "#ccc",
-  },
-  textArea: {
-    height: 120,
-    borderWidth: 1,
-    padding: 10,
-    borderRadius: 8,
-    textAlignVertical: "top",
-    borderColor: "#ccc",
-  }
-});
