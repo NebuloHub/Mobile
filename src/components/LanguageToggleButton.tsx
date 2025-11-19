@@ -30,17 +30,18 @@ export default function LanguageSelector() {
         <Ionicons
             name="chevron-down-outline"
             size={24}
+            style={styles.olho}
         />
       </TouchableOpacity>
 
       {open && (
-        <View>
+        <View style={styles.caixaLinguagem}>
           {langs.map((lang) => (
             <TouchableOpacity
               key={lang.code}
               onPress={() => changeLanguage(lang.code)}
             >
-              <Text>{lang.label}</Text>
+              <Text style={styles.textLinguagem}>{lang.label}</Text>
             </TouchableOpacity>
           ))}
         </View>

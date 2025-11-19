@@ -67,11 +67,12 @@ export default function LoginScreen({ navigation }: any) {
           <Text style={styles.titulo}>{t("home.title")}</Text>
         </View>
 
-        <View>
+        <View style={styles.formCorpo}>
 
           <Field label="Email" error={errors.email}>
             <TextInput 
               placeholder="Digite aqui seu email"
+              placeholderTextColor="#888"
               value={email}
               onChangeText={(t) => {
                 setEmail(t);
@@ -95,19 +96,21 @@ export default function LoginScreen({ navigation }: any) {
             >
               <TextInput
                 placeholder="Digite aqui sua senha"
+                placeholderTextColor="#888"
                 secureTextEntry={!showSenha}
                 value={senha}
                 onChangeText={(t) => {
                   setSenha(t);
                   setErrors((prev) => ({ ...prev, senha: false }));
                 }}
-                style={{ flex: 1 }}
+                style={styles.textoSenha}
               />
 
               <TouchableOpacity onPress={() => setShowSenha(!showSenha)}>
                 <Ionicons
                   name={showSenha ? "eye-off-outline" : "eye-outline"}
                   size={22}
+                  style={styles.olho}
                 />
               </TouchableOpacity>
             </View>
@@ -115,7 +118,7 @@ export default function LoginScreen({ navigation }: any) {
 
           <View >
             <TouchableOpacity style={styles.button} onPress={handleLogin}>
-              <Text>Entrar</Text>
+              <Text style={styles.textButton}>Entrar</Text>
             </TouchableOpacity>
           </View>
 
@@ -124,7 +127,7 @@ export default function LoginScreen({ navigation }: any) {
 
         <View >
           <TouchableOpacity style={styles.outroButton} onPress={() => navigation.navigate("Register")}>
-            <Text>Criar nova conta</Text>
+            <Text style={styles.textOutroButton}>Criar nova conta</Text>
           </TouchableOpacity>
         </View>
 

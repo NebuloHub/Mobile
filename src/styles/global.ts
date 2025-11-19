@@ -10,6 +10,7 @@ export const globalStyles = StyleSheet.create({
 
     pagina: {
         backgroundColor: themeColors.dark.background,
+        minHeight: "100%",
     },
 
 
@@ -25,11 +26,16 @@ export const globalStyles = StyleSheet.create({
         color: themeColors.dark.titulo,
     },
 
+    formCorpo: {
+        gap: 5,
+    },
+
     input: {
         borderWidth: 1,
         padding: 10,
         borderRadius: 8,
         borderColor: themeColors.dark.borda,
+        color: themeColors.dark.text,
     },
 
     passwordContainer: {
@@ -39,11 +45,20 @@ export const globalStyles = StyleSheet.create({
         alignItems: "center",
         paddingHorizontal: 10,
         borderColor: themeColors.dark.borda,
+        color: themeColors.dark.text,
     },
 
+    textoSenha: {
+        flex:1,
+        color: themeColors.dark.text,
+    },
 
+    olho: {
+        color: themeColors.dark.text,
+    },
 
     button: {
+      marginTop: 10,
       backgroundColor: "#FFB100",
       padding: 12,
       borderRadius: 20,
@@ -51,11 +66,26 @@ export const globalStyles = StyleSheet.create({
     },
 
     outroButton: {
+      marginTop: 170,
+      marginBottom: 30,
       borderWidth: 2,
       borderColor: "#FFB100",
       padding: 12,
       borderRadius: 20,
       alignItems: "center",
+
+    },
+
+    textButton: {
+        fontSize: 15,
+        fontWeight: "500",
+        color: themeColors.dark.titulo,
+    },
+
+    textOutroButton: {
+        fontSize: 15,
+        fontWeight: "500",
+        color: "#FFB100",
     },
 
 
@@ -73,12 +103,17 @@ export const globalStyles = StyleSheet.create({
     },
 
     textLinguagem: {
+        color: themeColors.dark.text,
         fontSize: 15,
         fontWeight: "bold",
     },
 
+    caixaLinguagem: {
+        gap: 10,
+    },
+
     //----------------------------------------------------
-    //                  Componete Field
+    //                  Componente Field
     //----------------------------------------------------
 
     caixa: {
