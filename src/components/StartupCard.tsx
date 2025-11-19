@@ -14,12 +14,17 @@ import { getStartupByCNPJ } from "../api/startup";
 import { UserResponse } from "../types/usuario";
 import { getUserByCPF } from "../api/usuario";
 
+import { globalStyles } from "../styles/global";
+
 interface Props {
   data: AllStartupsResponse | StartupResponse;
   onPress?: () => void;
 }
 
 export default function StartupCard({ data, onPress }: Props) {
+
+  const styles = globalStyles;
+
   const [avaliacoes, setAvaliacoes] = useState<AvaliacaoResponse[]>([]);
   const [user, setUser] = useState<UserResponse>();
   const [loading, setLoading] = useState(true);
@@ -118,14 +123,3 @@ function extractYT(url: string): string {
   const match = url.match(regex);
   return match ? match[1] : "";
 }
-
-const styles = StyleSheet.create({
-  // A thumbnail tu deixa Luiz ela q mostra o vídeo
-  thumbnail: {
-    width: "100%",
-    height: 180,
-  },
-  stars: {
-    flexDirection: "row",
-  },
-});

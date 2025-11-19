@@ -143,5 +143,43 @@ export const globalStyles = StyleSheet.create({
         textAlignVertical: "top",
         borderColor: themeColors.dark.borda,
         color: themeColors.dark.text,
-    }
+    },
+
+    //----------------------------------------------------
+    //                      Home
+    //----------------------------------------------------
+
+    headerHome: {
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 15,
+        color: themeColors.dark.text,
+        justifyContent: "space-between",
+    },
+
+    tituloHome: {
+        fontSize: 30,
+        fontWeight: "bold",
+        color: themeColors.dark.titulo,
+    },
+
+    botaoHeader: {
+        color: themeColors.dark.titulo,
+    },
+
+    //----------------------------------------------------
+    //                    StartupCard
+    //----------------------------------------------------
+
+    thumbnail: {
+        width: "80%",
+        height: 180,
+        borderRadius: 20,
+        alignSelf: "center",
+        marginVertical: 10,
+    },
+    stars: {
+        flexDirection: "row",
+    },
+
 })

@@ -14,8 +14,12 @@ import { useAuth } from "../../context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { globalStyles } from "../../styles/global";
+
 export default function Home({ navigation }: any) {
   const { signOut } = useAuth();
+
+  const styles = globalStyles;
 
   const [startups, setStartups] = useState<AllStartupsResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,30 +41,25 @@ export default function Home({ navigation }: any) {
   };
 
   return (
-    <SafeAreaView edges={["top", "bottom"]}>
-      <View>
+    <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
+      
+      <View style={styles.headerHome}>
         <View>
-          <Text>NebuloHub</Text>
+          <Text style={styles.tituloHome}>NebuloHub</Text>
         </View>
 
         <View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("SearchStartup")}
-          >
-            <Ionicons name="search-outline" size={22} />
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={loadStartups}>
-            <Ionicons name="refresh-outline" size={22} />
-          </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("RegisterStartup")}
-          >
-            <Ionicons name="add-outline" size={22} />
+            onPress={() => navigation.navigate("RegisterStartup")}>
+            <Ionicons name="add-outline" size={35}  style={styles.botaoHeader}/>
           </TouchableOpacity>
         </View>
       </View>
+
+      <TouchableOpacity style={{justifyContent: "center", alignItems: "center", marginVertical: 5}} onPress={loadStartups}>
+          <Ionicons name="refresh-outline" size={25}  style={styles.botaoHeader}/>
+      </TouchableOpacity>
 
       {loading ? (
         <ActivityIndicator size="large" style={{ marginTop: 20 }} />

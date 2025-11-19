@@ -12,7 +12,7 @@ export const themeColors = {
   light: {
     background: '#fff',
     text: '#000',
-    buttonText: '#fff',
+    buttonText: '#000000',
     borda: '#000000',
     titulo: '#000000',
   },
