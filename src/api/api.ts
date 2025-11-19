@@ -10,7 +10,7 @@ function resolveBaseURL() {
   if (expoHost) {
     const ip = expoHost.split(":")[0];
     console.log("[API DEBUG] IP detectado pelo Expo:", ip);
-    return `http://${ip}:5100/api/v2`;
+    return `http://${ip}:5101/api/v2`;
   }
 
   console.log("[API DEBUG] Expo NÃO retornou hostUri");
@@ -18,11 +18,11 @@ function resolveBaseURL() {
   // ANDROID EMULATOR (não é o seu caso)
   if (Platform.OS === "android") {
     console.log("[API DEBUG] Fallback: 10.0.2.2 (Emulador)");
-    return "http://10.0.2.2:5100/api/v2";
+    return "http://10.0.2.2:5101/api/v2";
   }
 
   // iOS SIMULATOR
-  return "http://localhost:5100/api/v2";
+  return "http://localhost:5101/api/v2";
 }
 
 const BASE_URL = resolveBaseURL();
