@@ -17,12 +17,14 @@ import { useAuth } from "../../context/AuthContext";
 import { isValidEmail, isValidURL } from "../../utils/validators";
 import Field from "../../components/Field";
 
+import { useTheme } from "../../context/ThemeContext";
 import { globalStyles } from "../../styles/global";
 
 export default function RegisterStartupScreen({ navigation }: any) {
   const { user } = useAuth();
 
-    const styles = globalStyles;
+  const { colors } = useTheme();
+  const styles = globalStyles(colors);
 
   const [form, setForm] = useState<StartupRequest>({
     cnpj: "",

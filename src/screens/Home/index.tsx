@@ -14,12 +14,14 @@ import { useAuth } from "../../context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useTheme } from "../../context/ThemeContext";
 import { globalStyles } from "../../styles/global";
 
 export default function Home({ navigation }: any) {
   const { signOut } = useAuth();
 
-  const styles = globalStyles;
+  const { colors } = useTheme();
+  const styles = globalStyles(colors);
 
   const [startups, setStartups] = useState<AllStartupsResponse[]>([]);
   const [loading, setLoading] = useState(true);

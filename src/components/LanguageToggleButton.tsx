@@ -4,12 +4,14 @@ import { Ionicons } from '@expo/vector-icons';
 import i18n, { setLocale } from "../i18n";
 import { t } from '../i18n'
 
+import { useTheme } from "../context/ThemeContext";
 import { globalStyles } from "../styles/global";
 
 export default function LanguageSelector() {
   const [open, setOpen] = useState(false);
 
-  const styles = globalStyles;
+  const { colors } = useTheme();
+  const styles = globalStyles(colors);
 
 
   const langs = [

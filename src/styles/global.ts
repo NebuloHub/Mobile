@@ -2,14 +2,14 @@ import { StyleSheet } from "react-native";
 import { themeColors } from "../context/ThemeContext";
 
 
-export const globalStyles = StyleSheet.create({
+export const globalStyles= (colors: typeof themeColors.light) => StyleSheet.create({
 
     //----------------------------------------------------
     //                      FORMS
     //----------------------------------------------------
 
     pagina: {
-        backgroundColor: themeColors.dark.background,
+        backgroundColor: colors.background,
         minHeight: "100%",
     },
 
@@ -23,7 +23,7 @@ export const globalStyles = StyleSheet.create({
     titulo: {
         fontSize: 36,
         fontWeight: "bold",
-        color: themeColors.dark.titulo,
+        color: colors.titulo,
     },
 
     formCorpo: {
@@ -34,8 +34,8 @@ export const globalStyles = StyleSheet.create({
         borderWidth: 1,
         padding: 10,
         borderRadius: 8,
-        borderColor: themeColors.dark.borda,
-        color: themeColors.dark.text,
+        borderColor: colors.borda,
+        color: colors.text,
     },
 
     passwordContainer: {
@@ -44,17 +44,17 @@ export const globalStyles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: 10,
-        borderColor: themeColors.dark.borda,
-        color: themeColors.dark.text,
+        borderColor: colors.borda,
+        color: colors.text,
     },
 
     textoSenha: {
         flex:1,
-        color: themeColors.dark.text,
+        color: colors.text,
     },
 
     olho: {
-        color: themeColors.dark.text,
+        color: colors.text,
     },
 
     button: {
@@ -79,7 +79,7 @@ export const globalStyles = StyleSheet.create({
     textButton: {
         fontSize: 15,
         fontWeight: "500",
-        color: themeColors.dark.titulo,
+        color: colors.titulo,
     },
 
     textOutroButton: {
@@ -103,7 +103,7 @@ export const globalStyles = StyleSheet.create({
     },
 
     textLinguagem: {
-        color: themeColors.dark.text,
+        color: colors.text,
         fontSize: 15,
         fontWeight: "bold",
     },
@@ -112,6 +112,7 @@ export const globalStyles = StyleSheet.create({
         gap: 10,
     },
 
+
     //----------------------------------------------------
     //                  Componente Field
     //----------------------------------------------------
@@ -119,17 +120,20 @@ export const globalStyles = StyleSheet.create({
     caixa: {
         marginBottom: 16,
     },
+
     label: {
         fontSize: 15,
         fontWeight: "500",
         marginBottom: 6,
-        color: themeColors.dark.titulo,
+        color: colors.titulo,
     },
+
     errorText: {
         color: "red",
         fontSize: 13,
         marginTop: 4,
     },
+
 
     //----------------------------------------------------
     //                  Resgisto Startup
@@ -141,9 +145,10 @@ export const globalStyles = StyleSheet.create({
         padding: 10,
         borderRadius: 8,
         textAlignVertical: "top",
-        borderColor: themeColors.dark.borda,
-        color: themeColors.dark.text,
+        borderColor: colors.borda,
+        color: colors.text,
     },
+
 
     //----------------------------------------------------
     //                      Home
@@ -153,23 +158,44 @@ export const globalStyles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         padding: 15,
-        color: themeColors.dark.text,
+        color: colors.text,
         justifyContent: "space-between",
     },
 
     tituloHome: {
         fontSize: 30,
         fontWeight: "bold",
-        color: themeColors.dark.titulo,
+        color: colors.titulo,
     },
 
     botaoHeader: {
-        color: themeColors.dark.titulo,
+        color: colors.titulo,
     },
+
 
     //----------------------------------------------------
     //                    StartupCard
     //----------------------------------------------------
+
+
+    card: {
+        paddingHorizontal: 10,
+        paddingVertical: 25, 
+        borderBottomWidth: 2, 
+        borderColor: colors.borda,
+        marginBottom: 15,
+    },
+
+    headerCard: {
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        gap: 10,
+    },
+
+    userCard: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
 
     thumbnail: {
         width: "80%",
@@ -178,8 +204,25 @@ export const globalStyles = StyleSheet.create({
         alignSelf: "center",
         marginVertical: 10,
     },
+
     stars: {
         flexDirection: "row",
+    },
+
+    iconUserHome: {
+        color: colors.titulo,
+    },
+
+    nomeCard: {
+        fontSize: 15,
+        fontWeight: "500",
+        color: colors.titulo,
+    },
+
+    sobreCard: {
+        fontSize: 15,
+        fontWeight: "500",
+        color: "#FFB100",
     },
 
 })

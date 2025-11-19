@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, ViewStyle } from "react-native";
 
+import { useTheme } from "../context/ThemeContext";
 import { globalStyles } from "../styles/global";
 
 interface FieldProps {
@@ -13,7 +14,8 @@ interface FieldProps {
 
 export default function Field({ label, error, children, style, required }: FieldProps) {
 
-  const styles = globalStyles;
+  const { colors } = useTheme();
+  const styles = globalStyles(colors);
 
 
   return (

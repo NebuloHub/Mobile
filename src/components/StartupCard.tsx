@@ -14,6 +14,7 @@ import { getStartupByCNPJ } from "../api/startup";
 import { UserResponse } from "../types/usuario";
 import { getUserByCPF } from "../api/usuario";
 
+import { useTheme } from "../context/ThemeContext";
 import { globalStyles } from "../styles/global";
 
 interface Props {
@@ -23,7 +24,9 @@ interface Props {
 
 export default function StartupCard({ data, onPress }: Props) {
 
-  const styles = globalStyles;
+  const { colors } = useTheme();
+  const styles = globalStyles(colors);
+
 
   const [avaliacoes, setAvaliacoes] = useState<AvaliacaoResponse[]>([]);
   const [user, setUser] = useState<UserResponse>();
@@ -58,14 +61,14 @@ export default function StartupCard({ data, onPress }: Props) {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       if (i <= Math.floor(mediaNota)) {
-        stars.push(<Ionicons key={i} name="star" size={16} color="#FFD700" />);
+        stars.push(<Ionicons key={i} name="star" size={16} color="#FFB100" />);
       } else if (i - mediaNota < 1) {
         stars.push(
-          <Ionicons key={i} name="star-half" size={16} color="#FFD700" />
+          <Ionicons key={i} name="star-half" size={16} color="#FFB100" />
         );
       } else {
         stars.push(
-          <Ionicons key={i} name="star-outline" size={16} color="#FFD700" />
+          <Ionicons key={i} name="star-outline" size={16} color="#FFB100" />
         );
       }
     }
@@ -73,11 +76,22 @@ export default function StartupCard({ data, onPress }: Props) {
   };
 
   return (
-    <TouchableOpacity onPress={onPress}>
-      <View>
-        <Ionicons name="person-circle-outline" size={22} />
-        <Text>{user?.nome}</Text>
+    
+    <View style= {styles.card}>
+
+       <View style={styles.userCard}>
+        <View style={styles.headerCard}>
+          <Ionicons name="person-circle-outline" size={40}  style={styles.iconUserHome}/>
+          <Text style={styles.nomeCard}>{user?.nome}</Text>
+        </View>
+
+        <TouchableOpacity style={styles.headerCard}  onPress={onPress}>
+          <Text style={styles.sobreCard}>Sobre...</Text>
+        </TouchableOpacity>
+
       </View>
+
+      
       {data.video ? (
         <Image
           source={{
@@ -94,25 +108,35 @@ export default function StartupCard({ data, onPress }: Props) {
         />
       )}
 
-      <View>
-        <Text>{data.nomeStartup}</Text>
-        <Text>{data.emailStartup}</Text>
+      <View style={[styles.userCard, { paddingHorizontal: 45 }]}>
 
-        <View>
+        <View style={[styles.linguagem,{ alignItems: "center" }]}>
+
+          <Text style={styles.textLinguagem}>{data.nomeStartup}</Text>
+
+          <View style={styles.stars}>{renderStars()}</View>
+
+        </View>
+
+        
+
+        <View >
           {loading ? (
             <ActivityIndicator size="small" />
           ) : (
             <View>
-              <View style={styles.stars}>{renderStars()}</View>
-              <View>
-                <Text>{totalComentarios}</Text>
-                <Ionicons name="chatbox-ellipses-outline" size={22} />
+              <View style={[styles.userCard,{ gap:5}]}>
+                <Ionicons name="chatbox-ellipses-outline" size={25} style={styles.olho}/>
+                <Text style={styles.textLinguagem}>{totalComentarios}</Text>
               </View>
             </View>
           )}
         </View>
       </View>
-    </TouchableOpacity>
+
+
+    </View>
+
   );
 }
 

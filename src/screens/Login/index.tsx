@@ -17,6 +17,7 @@ import { t } from "../../i18n";
 import Field from "../../components/Field";
 import { isValidEmail } from "../../utils/validators";
 
+import { useTheme } from "../../context/ThemeContext";
 import { globalStyles } from "../../styles/global";
 
 export default function LoginScreen({ navigation }: any) {
@@ -26,7 +27,8 @@ export default function LoginScreen({ navigation }: any) {
   const [senha, setSenha] = useState("");
   const [showSenha, setShowSenha] = useState(false);
 
-  const styles = globalStyles;
+  const { colors } = useTheme();
+  const styles = globalStyles(colors);
 
   const [errors, setErrors] = useState({
     email: false,

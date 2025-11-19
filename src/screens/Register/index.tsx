@@ -20,11 +20,13 @@ import { isValidEmail, isValidatePassword } from "../../utils/validators";
 import LanguageToggleButton from "../../components/LanguageToggleButton";
 import Field from "../../components/Field";
 
+import { useTheme } from "../../context/ThemeContext";
 import { globalStyles } from "../../styles/global";
 
 export default function RegisterScreen({ navigation }: any) {
 
-  const styles = globalStyles;
+  const { colors } = useTheme();
+  const styles = globalStyles(colors);
 
   const { signUp } = useAuth();
 
