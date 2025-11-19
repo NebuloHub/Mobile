@@ -17,8 +17,14 @@ import { getUserByCPF } from "../../api/usuario";
 import StartupCard from "../../components/StartupCard";
 import { UserResponse } from "../../types/usuario";
 
+import { useTheme } from "../../context/ThemeContext";
+import { globalStyles } from "../../styles/global";
+
 export default function ProfileScreen({ navigation }: any) {
   const { user } = useAuth();
+
+  const { colors } = useTheme();
+  const styles = globalStyles(colors);
 
   const defaultImage = require("../../../assets/placeholders/user.jpg");
 
@@ -90,28 +96,38 @@ export default function ProfileScreen({ navigation }: any) {
   }
 
   return (
-    <SafeAreaView edges={["top", "bottom"]}>
-      <ScrollView>
+    <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
+
+      <ScrollView contentContainerStyle={styles.profile}>
+
         {/* Card do perfil */}
-        <View>
-          <View>
-            <Text>{fullUser.nome}</Text>
+        <View style={styles.profileCard}>
+
+          <View style={styles.dadosCard}>
+
             <View>
+              <Text style={styles.nomeCardProfile}>{fullUser.nome}</Text>
               <Info label="Email" value={fullUser.email} />
               <Info label="CPF" value={fullUser.cpf} />
               <Info label="Telefone" value={fullUser.telefone || "—"} />
             </View>
+
+
+            <View>
+              <TouchableOpacity onPress={() => setShowOptions(true)}>
+                <Image source={profileImage} style={styles.profileImage} />
+              </TouchableOpacity>
+
+            </View>
+
           </View>
-          <View>
-            <TouchableOpacity onPress={() => setShowOptions(true)}>
-              <Image source={profileImage} style={styles.profileImage} />
-            </TouchableOpacity>
-          </View>
-          <View>
-            <TouchableOpacity>
-              <Text>Editar Perfil</Text>
-            </TouchableOpacity>
-          </View>
+
+            <View>
+              <TouchableOpacity style={styles.buttonProfile}>
+                <Text style={styles.textOutroButton}>Editar Perfil</Text>
+              </TouchableOpacity>
+            </View>
+          
         </View>
 
         {/* Startups */}
@@ -170,10 +186,10 @@ export default function ProfileScreen({ navigation }: any) {
 
 function Info({ label, value }: any) {
   return (
-    <>
-      <Text>{label}:</Text>
-      <Text>{value}</Text>
-    </>
+    <View style={{ flexDirection: "row", gap: 5, paddingVertical: 3, marginVertical: 5 }}>
+      <Text style={{color: "#5D5D5D", fontSize: 15, fontWeight: "bold",}}>{label}:</Text>
+      <Text style={{color: "#5D5D5D", fontSize: 15, fontWeight: "bold",}}>{value}</Text>
+    </View>
   );
 }
 
@@ -184,48 +200,3 @@ function Option({ label, onPress, danger }: any) {
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  // De preferencias deixa esses estilos aqui, eles são do ícone do perfil, do zoom da foto e das opções da foto
-  // Mas pode alterar eles como quiser
-  profileImage: {
-    width: 130,
-    height: 130,
-    borderRadius: 65,
-    borderWidth: 3,
-    borderColor: "#fff",
-    elevation: 4,
-  },
-
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "flex-end",
-  },
-
-  overlayBackground: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.3)",
-  },
-
-  zoomContainer: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.95)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  zoomImage: {
-    width: "100%",
-    height: "80%",
-  },
-
-  closeText: {
-    color: "white",
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-});

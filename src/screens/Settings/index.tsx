@@ -4,8 +4,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import ThemeToggle from "../../components/ThemeToggleButton";
 import { deleteUserByCPF } from "../../api/usuario"; 
 
+import { useTheme } from "../../context/ThemeContext";
+import { globalStyles } from "../../styles/global";
+
 export default function SettingsScreen({ navigation }: any) {
   const { signOut, user } = useAuth();
+
+  const { colors } = useTheme();
+  const styles = globalStyles(colors);
 
   const handleDeleteUser = async () => {
     if (!user?.cpf) {
@@ -37,8 +43,10 @@ export default function SettingsScreen({ navigation }: any) {
   };
 
   return (
-    <SafeAreaView edges={["top", "bottom"]}>
+    <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
       <Text>Configurações</Text>
+
+      <ThemeToggle />
 
       <TouchableOpacity onPress={signOut} style={{ marginBottom: 20 }}>
         <Text>Deslogar</Text>
@@ -48,7 +56,7 @@ export default function SettingsScreen({ navigation }: any) {
         <Text>Deletar Conta</Text>
       </TouchableOpacity>
 
-      <ThemeToggle />
+      
     </SafeAreaView>
   );
 }

@@ -225,4 +225,89 @@ export const globalStyles= (colors: typeof themeColors.light) => StyleSheet.crea
         color: "#FFB100",
     },
 
+
+    //----------------------------------------------------
+    //                    Profile
+    //----------------------------------------------------
+
+    profile: {
+        paddingTop: 60,
+        gap:60,
+    },
+
+
+    // De preferencias deixa esses estilos aqui, eles são do ícone do perfil, do zoom da foto e das opções da foto
+    // Mas pode alterar eles como quiser
+    profileImage: {
+        width: 130,
+        height: 130,
+        borderRadius: 65,
+        borderWidth: 3,
+        borderColor: "#fff",
+        elevation: 4,
+    },
+
+    overlay: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: "flex-end",
+    },
+
+    overlayBackground: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: "rgba(0,0,0,0.3)",
+    },
+
+    zoomContainer: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.95)",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    zoomImage: {
+        width: "100%",
+        height: "80%",
+    },
+
+    closeText: {
+        color: "white",
+        fontSize: 24,
+        fontWeight: "bold",
+    },
+
+    profileCard: {
+
+        borderBottomWidth: 2, 
+        borderBottomColor: colors.borda, 
+        paddingBottom: 15, 
+        marginBottom: 15 
+    },
+
+    dadosCard: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        paddingBottom: 15, 
+        marginBottom: 15 
+    },
+
+    nomeCardProfile: {
+        fontSize: 20,
+        fontWeight: "500",
+        color: colors.titulo,
+    },
+
+    buttonProfile: {
+      marginBottom: 10,
+      borderWidth: 2,
+      borderColor: "#FFB100",
+      padding: 12,
+      borderRadius: 20,
+      alignItems: "center",
+      marginHorizontal: 15,
+    },
+
 })

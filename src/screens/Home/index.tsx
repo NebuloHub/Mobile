@@ -46,9 +46,11 @@ export default function Home({ navigation }: any) {
     <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
       
       <View style={styles.headerHome}>
-        <View>
+
+        {/* fiz o botão de dar loading ser o nome do nosso projeto*/}
+        <TouchableOpacity onPress={loadStartups}>
           <Text style={styles.tituloHome}>NebuloHub</Text>
-        </View>
+        </TouchableOpacity>
 
         <View>
 
@@ -58,10 +60,6 @@ export default function Home({ navigation }: any) {
           </TouchableOpacity>
         </View>
       </View>
-
-      <TouchableOpacity style={{justifyContent: "center", alignItems: "center", marginVertical: 5}} onPress={loadStartups}>
-          <Ionicons name="refresh-outline" size={25}  style={styles.botaoHeader}/>
-      </TouchableOpacity>
 
       {loading ? (
         <ActivityIndicator size="large" style={{ marginTop: 20 }} />
