@@ -10,3 +10,8 @@ export async function getUserByCPF(cpf:UserResponse["cpf"]): Promise<UserRespons
     const res = await api.get(`/Usuario/${cpf}`);
     return res.data;
 }
+
+export async function deleteUserByCPF(cpf: UserResponse["cpf"]): Promise<{ mensagem: string }> {
+    const res = await api.delete(`/Usuario/${cpf}`);
+    return res.data;
+}
