@@ -5,7 +5,6 @@ import {
   ActivityIndicator,
   ScrollView,
   Image,
-  StyleSheet,
   TouchableOpacity,
   Linking,
 } from "react-native";
@@ -81,7 +80,7 @@ export default function StartupDetails({ route, navigation }: Props) {
 
   if (loading) {
     return (
-      <View style={styles.center}>
+      <View>
         <ActivityIndicator size="large" color="#007AFF" />
       </View>
     );
@@ -89,7 +88,7 @@ export default function StartupDetails({ route, navigation }: Props) {
 
   if (!startup) {
     return (
-      <View style={styles.center}>
+      <View>
         <Text>Startup não encontrada.</Text>
       </View>
     );
@@ -105,62 +104,61 @@ export default function StartupDetails({ route, navigation }: Props) {
   const visibleAvaliacoes = expanded ? startup.avaliacoes : startup.avaliacoes.slice(0, 1);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView>
       {videoId ? (
         <TouchableOpacity onPress={() => openLink(startup.video)}>
           <Image
             source={{ uri: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` }}
-            style={styles.thumbnail}
           />
         </TouchableOpacity>
       ) : (
+        // Se você prefirir da pra trocar só para um texto falando que não tem vídeo
         <Image
           source={require("../../../assets/placeholders/video.png")}
-          style={styles.thumbnail}
         />
       )}
 
-      <Text style={styles.title}>{startup.nomeStartup}</Text>
-      <Text style={styles.desc}>{startup.descricao}</Text>
+      <Text>{startup.nomeStartup}</Text>
+      <Text>{startup.descricao}</Text>
 
       {startup.site && (
         <TouchableOpacity onPress={() => openLink(startup.site)}>
-          <Text style={styles.siteLink}>{startup.site}</Text>
+          <Text >{startup.site}</Text>
         </TouchableOpacity>
       )}
 
       {startup.habilidades?.length > 0 && (
-        <View style={{ marginTop: 22 }}>
-          <Text style={styles.section}>Habilidades</Text>
+        <View>
+          <Text>Habilidades</Text>
 
-          <View style={styles.skillsContainer}>
+          <View>
             {startup.habilidades.map((hab, index) => (
-              <View key={hab.idHabilidade ?? index} style={styles.skillBadge}>
-                <Text style={styles.skillName}>{hab.nomeHabilidade}</Text>
-                <Text style={styles.skillType}>{hab.tipoHabilidade}</Text>
+              <View key={hab.idHabilidade ?? index}>
+                <Text>{hab.nomeHabilidade}</Text>
+                <Text>{hab.tipoHabilidade}</Text>
               </View>
             ))}
           </View>
         </View>
       )}
 
-      <Text style={styles.section}>Avaliações</Text>
+      <Text>Avaliações</Text>
 
       {startup.avaliacoes?.length ? (
-        <View style={{ marginTop: 8 }}>
-          <Text style={styles.subtitle}>Avaliação Geral</Text>
+        <View>
+          <Text>Avaliação Geral</Text>
           <Stars value={media / 2} />
           <Text style={{ marginTop: 4 }}>
             {media.toFixed(1)} / 10 ({startup.avaliacoes.length} avaliações)
           </Text>
 
           {visibleAvaliacoes.map((a, index) => (
-            <View key={a.idAvaliacao ?? index} style={styles.avaliacaoBox}>
-              <Text style={styles.avaliadorName}>
+            <View key={a.idAvaliacao ?? index}>
+              <Text>
                 {a.usuario?.nome ?? "Usuário"}
               </Text>
               <Stars value={a.nota / 2} />
-              <Text style={styles.avaliacaoComentario}>
+              <Text >
                 {a.comentario || "Sem comentário"}
               </Text>
             </View>
@@ -172,91 +170,10 @@ export default function StartupDetails({ route, navigation }: Props) {
 
       <TouchableOpacity
         onPress={() => navigation.goBack()}
-        style={styles.backButton}
       >
-        <Text style={styles.backText}>Voltar</Text>
+        <Text>Voltar</Text>
       </TouchableOpacity>
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
-
-  center: { flex: 1, justifyContent: "center", alignItems: "center" },
-
-  thumbnail: {
-    width: "100%",
-    height: 200,
-    borderRadius: 10,
-    backgroundColor: "#ddd",
-  },
-
-  title: { fontSize: 26, fontWeight: "bold", marginTop: 12 },
-
-  desc: { marginTop: 8, color: "#444", fontSize: 15 },
-
-  siteLink: {
-    marginTop: 8,
-    color: "#007AFF",
-    textDecorationLine: "underline",
-  },
-
-  section: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 22,
-  },
-
-  /* -------- SKILLS -------- */
-  skillsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-    marginTop: 10,
-  },
-
-  skillBadge: {
-    backgroundColor: "#e6f0ff",
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-  },
-
-  skillName: {
-    fontWeight: "600",
-    fontSize: 14,
-  },
-
-  skillType: {
-    fontSize: 11,
-    opacity: 0.6,
-  },
-
-  /* -------- AVALIAÇÕES -------- */
-  subtitle: { fontWeight: "bold", marginBottom: 4 },
-
-  showMore: { color: "#007AFF", fontWeight: "bold" },
-
-  avaliacaoBox: {
-    marginTop: 12,
-    backgroundColor: "#f5f5f5",
-    padding: 12,
-    borderRadius: 8,
-  },
-
-  avaliadorName: { fontWeight: "bold", fontSize: 15, marginBottom: 4 },
-
-  avaliacaoComentario: { marginTop: 4, color: "#333" },
-
-  /* -------- VOLTAR -------- */
-  backButton: {
-    marginTop: 25,
-    padding: 12,
-    backgroundColor: "#007AFF",
-    borderRadius: 10,
-    alignItems: "center",
-  },
-
-  backText: { color: "#fff", fontWeight: "bold" },
-});

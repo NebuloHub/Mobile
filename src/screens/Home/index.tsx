@@ -38,7 +38,9 @@ export default function Home({ navigation }: any) {
   return (
     <View>
       <View>
-        <Text>NebuloHub</Text>
+        <View>
+          <Text>NebuloHub</Text>
+        </View>
 
         <View>
           <TouchableOpacity

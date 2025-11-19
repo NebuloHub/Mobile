@@ -1,20 +1,28 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ScrollView,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Picker } from "@react-native-picker/picker";
 import { MaskedTextInput } from "react-native-mask-text";
 import { Ionicons } from "@expo/vector-icons";
+
 import { useAuth } from "../../context/AuthContext";
 import PasswordStrengthBar, {
   getPasswordStrength,
 } from "../../components/PasswordStrengthBar";
-import { validateEmail, validatePassword } from "../../utils/validators";
+import { isValidEmail, isValidatePassword } from "../../utils/validators";
 import LanguageToggleButton from "../../components/LanguageToggleButton";
+import Field from "../../components/Field";
 
 export default function RegisterScreen({ navigation }: any) {
   const { signUp } = useAuth();
 
-  // FORM STATES
   const [form, setForm] = useState({
     cpf: "",
     nome: "",
@@ -25,16 +33,6 @@ export default function RegisterScreen({ navigation }: any) {
     role: "USER",
   });
 
-  const updateField = (key: string, value: string) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-    setErrors((prev) => ({ ...prev, [key]: false }));
-  };
-
-  // Senha visível
-  const [showPass, setShowPass] = useState(false);
-  const [showConfirmPass, setShowConfirmPass] = useState(false);
-
-  // Errors visuais
   const [errors, setErrors] = useState({
     cpf: false,
     nome: false,
@@ -43,7 +41,14 @@ export default function RegisterScreen({ navigation }: any) {
     confirmarSenha: false,
   });
 
-  // --- HANDLE REGISTER ---
+  const [showPass, setShowPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
+
+  const updateField = (key: string, value: string) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+    setErrors((prev) => ({ ...prev, [key]: false }));
+  };
+
   const handleRegister = async () => {
     let newErrors = { ...errors };
     let msg = "";
@@ -56,10 +61,10 @@ export default function RegisterScreen({ navigation }: any) {
     } else if (!form.nome.trim()) {
       newErrors.nome = true;
       msg = "Nome é obrigatório.";
-    } else if (!validateEmail(form.email)) {
+    } else if (!isValidEmail(form.email)) {
       newErrors.email = true;
       msg = "E-mail inválido.";
-    } else if (!validatePassword(form.senha)) {
+    } else if (!isValidatePassword(form.senha)) {
       newErrors.senha = true;
       msg =
         "A senha deve conter letra maiúscula, minúscula, número, caractere especial e mínimo 8 caracteres.";
@@ -69,22 +74,18 @@ export default function RegisterScreen({ navigation }: any) {
     }
 
     setErrors(newErrors);
-
-    if (msg) {
-      Alert.alert("Erro", msg);
-      return;
-    }
+    if (msg) return Alert.alert("Erro", msg);
 
     const payload = {
-      cpf: form.cpf.replace(/\D/g, ""), 
+      cpf: cpfNumbers,
       nome: form.nome,
       email: form.email,
       senha: form.senha,
       role: form.role,
-      telefone: form.telefone ? Number(form.telefone.replace(/\D/g, "")) : 0,
+      telefone: form.telefone
+        ? Number(form.telefone.replace(/\D/g, ""))
+        : 0,
     };
-
-    console.log("📤 Enviando para API:", payload);
 
     try {
       await signUp(payload);
@@ -97,48 +98,44 @@ export default function RegisterScreen({ navigation }: any) {
 
   return (
     <SafeAreaView>
-      <View>
+      <ScrollView>
         <LanguageToggleButton />
-      </View>
 
-      <View>
-        <Text> Criar uma conta</Text>
-      </View>
-
-      <View>
-        {/* CPF */}
         <View>
-          <Text>CPF</Text>
+          <Text>Criar uma conta</Text>
+        </View>
+
+        <Field label="CPF" error={errors.cpf}>
           <MaskedTextInput
             mask="999.999.999-99"
             keyboardType="numeric"
             value={form.cpf}
             onChangeText={(t) => updateField("cpf", t)}
-            placeholder="Digite aqui seu cpf"
+            placeholder="Digite aqui seu CPF"
             style={{
               borderWidth: 1,
+              padding: 10,
+              borderRadius: 8,
               borderColor: errors.cpf ? "red" : "#ccc",
             }}
           />
-        </View>
+        </Field>
 
-        {/* Nome */}
-        <View>
-          <Text>Nome</Text>
+        <Field label="Nome" error={errors.nome}>
           <TextInput
             value={form.nome}
             onChangeText={(t) => updateField("nome", t)}
             placeholder="Digite aqui seu nome"
             style={{
               borderWidth: 1,
+              padding: 10,
+              borderRadius: 8,
               borderColor: errors.nome ? "red" : "#ccc",
             }}
           />
-        </View>
+        </Field>
 
-        {/* Email */}
-        <View>
-          <Text>Email</Text>
+        <Field label="Email" error={errors.email}>
           <TextInput
             value={form.email}
             onChangeText={(t) => updateField("email", t)}
@@ -147,14 +144,14 @@ export default function RegisterScreen({ navigation }: any) {
             keyboardType="email-address"
             style={{
               borderWidth: 1,
+              padding: 10,
+              borderRadius: 8,
               borderColor: errors.email ? "red" : "#ccc",
             }}
           />
-        </View>
+        </Field>
 
-        {/* Telefone */}
-        <View>
-          <Text>Telefone (opcional)</Text>
+        <Field label="Telefone (opcional)" error={false}>
           <MaskedTextInput
             mask="(99) 99999-9999"
             keyboardType="phone-pad"
@@ -163,18 +160,22 @@ export default function RegisterScreen({ navigation }: any) {
             placeholder="Digite aqui seu telefone"
             style={{
               borderWidth: 1,
+              padding: 10,
+              borderRadius: 8,
               borderColor: "#ccc",
             }}
           />
-        </View>
+        </Field>
 
-        {/* Senha */}
-        <View>
-          <Text>Senha</Text>
+        <Field label="Senha" error={errors.senha}>
           <View
             style={{
               borderWidth: 1,
               borderColor: errors.senha ? "red" : "#ccc",
+              borderRadius: 8,
+              flexDirection: "row",
+              alignItems: "center",
+              paddingHorizontal: 10,
             }}
           >
             <TextInput
@@ -182,6 +183,7 @@ export default function RegisterScreen({ navigation }: any) {
               onChangeText={(t) => updateField("senha", t)}
               placeholder="Digite aqui sua senha"
               secureTextEntry={!showPass}
+              style={{ flex: 1 }}
             />
             <TouchableOpacity onPress={() => setShowPass(!showPass)}>
               <Ionicons
@@ -190,58 +192,62 @@ export default function RegisterScreen({ navigation }: any) {
               />
             </TouchableOpacity>
           </View>
-        </View>
+        </Field>
 
         <PasswordStrengthBar score={getPasswordStrength(form.senha)} />
 
-        {/* Confirmar Senha */}
-        <View>
-          <Text>Confirmar Senha</Text>
+        <Field label="Confirmar Senha" error={errors.confirmarSenha}>
           <View
             style={{
               borderWidth: 1,
               borderColor: errors.confirmarSenha ? "red" : "#ccc",
+              borderRadius: 8,
+              flexDirection: "row",
+              alignItems: "center",
+              paddingHorizontal: 10,
             }}
           >
             <TextInput
               value={form.confirmarSenha}
               onChangeText={(t) => updateField("confirmarSenha", t)}
-              placeholder="Confirme sua senha aqui"
+              placeholder="Confirme sua senha"
               secureTextEntry={!showConfirmPass}
+              style={{ flex: 1 }}
             />
-            <TouchableOpacity
-              onPress={() => setShowConfirmPass(!showConfirmPass)}
-            >
+            <TouchableOpacity onPress={() => setShowConfirmPass(!showConfirmPass)}>
               <Ionicons
                 name={showConfirmPass ? "eye-outline" : "eye-off-outline"}
                 size={22}
               />
             </TouchableOpacity>
           </View>
+        </Field>
+
+        <View>
+          <View>
+            <Text>Tipo de usuário:</Text>
+          </View>
+          <Picker
+            selectedValue={form.role}
+            onValueChange={(v) => updateField("role", v)}
+            >
+            <Picker.Item label="Usuário" value="USER" />
+            <Picker.Item label="Administrador" value="ADMIN" />
+          </Picker>
         </View>
 
-        {/* Role */}
-        <Text>Tipo de usuário:</Text>
-        <Picker
-          selectedValue={form.role}
-          onValueChange={(v) => updateField("role", v)}
-        >
-          <Picker.Item label="Usuário" value="USER" />
-          <Picker.Item label="Administrador" value="ADMIN" />
-        </Picker>
-      </View>
+        <View>
+          <TouchableOpacity onPress={handleRegister}>
+            <Text>Cadastrar</Text>
+          </TouchableOpacity>
+        </View>
 
-      {/* Botão */}
-      <View>
-        <TouchableOpacity onPress={handleRegister}>
-          <Text>Cadastrar</Text>
-        </TouchableOpacity>
-      </View>
-      <View>
-        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text>Já tenho conta</Text>
-        </TouchableOpacity>
-      </View>
+        <View>
+          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <Text>Já tenho conta</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
