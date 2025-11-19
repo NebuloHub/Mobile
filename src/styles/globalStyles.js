@@ -2,7 +2,7 @@ import { useTheme } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 
 
-export const createGlobalStyles = (colors : any) =>
+export const createGlobalStyles = () =>
 
     StyleSheet.create({
 
