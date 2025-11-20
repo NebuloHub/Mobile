@@ -15,3 +15,8 @@ export async function deleteUserByCPF(cpf: UserResponse["cpf"]): Promise<{ mensa
     const res = await api.delete(`/Usuario/${cpf}`);
     return res.data;
 }
+
+export async function putUserByCPF(cpf: UserResponse["cpf"], data: UserResponse) {
+    const res = await api.put(`/Usuario/${cpf}`, data);
+    return res.data;
+} 

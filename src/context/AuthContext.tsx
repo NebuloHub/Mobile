@@ -23,9 +23,13 @@ interface AuthContextData {
   user: UsuarioAuth | null;
   token: string | null;
   loading: boolean;
+
   signIn: (data: LoginRequest) => Promise<void>;
   signOut: () => Promise<void>;
   signUp: (data: UserResponse) => Promise<void>;
+
+  // 🔥 Necessário para editar perfil
+  setUser: React.Dispatch<React.SetStateAction<UsuarioAuth | null>>;
 }
 
 const AuthContext = createContext<AuthContextData | undefined>(undefined);
@@ -37,9 +41,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const [logoutTimer, setLogoutTimer] = useState<NodeJS.Timeout | null>(null);
 
-  /**
-   * 🔥 Agenda logout automático
-   */
+  // ---------------------------------------------------------
+  // ⏳ Configura logout automático baseado no tempo restante
+  // ---------------------------------------------------------
   const scheduleLogout = (expiresAt: number) => {
     const timeLeft = expiresAt - Date.now();
 
@@ -58,9 +62,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLogoutTimer(timer);
   };
 
-  /**
-   * 🔥 Inicializa estado com dados salvos
-   */
+  // ---------------------------------------------------------
+  // 🔄 Carrega dados do storage na inicialização
+  // ---------------------------------------------------------
   useEffect(() => {
     const loadStorage = async () => {
       try {
@@ -91,22 +95,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loadStorage();
   }, []);
 
-  /**
-   * 🔥 Login — adicionando CPF vindo do token
-   */
+  // ---------------------------------------------------------
+  // 🔐 Login
+  // ---------------------------------------------------------
   const signIn = async ({ email, senha }: LoginRequest) => {
     const response: LoginResponse = await login({ email, senha });
 
     const authToken = response.token;
-
     const decoded: any = jwtDecode(authToken);
 
     const authUser: UsuarioAuth = {
       ...response.usuario,
-      cpf: decoded.cpf, // vem do token
+      cpf: decoded.cpf, // vindo do token
     };
 
-    const expiresAt = Date.now() + SESSION_DURATION_MINUTES * 60 * 1000;
+    const expiresAt =
+      Date.now() + SESSION_DURATION_MINUTES * 60 * 1000;
 
     setAxiosToken(authToken);
     setToken(authToken);
@@ -119,9 +123,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     scheduleLogout(expiresAt);
   };
 
-  /**
-   * 🔥 Logout
-   */
+  // ---------------------------------------------------------
+  // 🚪 Logout
+  // ---------------------------------------------------------
   const signOut = async () => {
     setUser(null);
     setToken(null);
@@ -132,6 +136,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await AsyncStorage.multiRemove(["@token", "@user", "@expiresAt"]);
   };
 
+  // ---------------------------------------------------------
+  // 🆕 Registro
+  // ---------------------------------------------------------
   const signUp = async (data: UserResponse) => {
     try {
       return await register(data);
@@ -145,6 +152,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // ---------------------------------------------------------
+  // 🧠 Provider
+  // ---------------------------------------------------------
   return (
     <AuthContext.Provider
       value={{
@@ -154,6 +164,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signIn,
         signOut,
         signUp,
+        setUser, // 🔥 agora disponível no useAuth()
       }}
     >
       {children}
@@ -161,6 +172,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+// ---------------------------------------------------------
+// 🔥 Hook customizado
+// ---------------------------------------------------------
 export const useAuth = () => {
   const context = useContext(AuthContext);
 
