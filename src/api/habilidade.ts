@@ -1,25 +1,30 @@
 import api from "./api";
 import {
-  AllHabilidadeResponse,
   HabilidadeResquest,
   HabilidadeResponse,
+  HabilidadeListResponse,
 } from "../types/habilidade";
-
-interface HabilidadeListResponse {
-  page: number;
-  pageSize: number;
-  totalItems: number;
-  items: AllHabilidadeResponse[];
-}
 
 export async function getAllHabilidades(
   page = 1,
-  pageSize = 100
+  pageSize = 20
 ): Promise<HabilidadeListResponse> {
-  const res = await api.get(
-    `/Habilidade?page=${page}&pageSize=${pageSize}`
-  );
-  return res.data;
+  try {
+    const res = await api.get(`/Habilidade?page=${page}&pageSize=${pageSize}`);
+
+    if (!res.data.items || !Array.isArray(res.data.items)) {
+      return {
+        page: res.data.page ?? 1,
+        pageSize: res.data.pageSize ?? 20,
+        totalItems: res.data.totalItems ?? 0,
+        items: [],
+      };
+    }
+
+    return res.data;
+  } catch (err: any) {
+    throw err;
+  }
 }
 
 export async function getHabilidadeById(

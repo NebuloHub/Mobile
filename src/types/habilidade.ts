@@ -13,6 +13,13 @@ export interface HabilidadeResponse {
   tipoHabilidade: string;
 }
 
+export interface HabilidadeListResponse {
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  items: AllHabilidadeResponse[];
+}
+
 export interface HabilidadeResquest{
   nomeHabilidade: string;
   tipoHabilidade: string;

@@ -1,4 +1,3 @@
-// StartupDetails/index.tsx
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
@@ -8,37 +7,36 @@ import {
   Image,
   TouchableOpacity,
   Linking,
-  TextInput,
   Alert,
-  KeyboardAvoidingView,
-  Platform,
+  Modal,
 } from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import { SafeAreaView } from "react-native-safe-area-context";
+import YoutubePlayer from "react-native-youtube-iframe";
 import { Ionicons } from "@expo/vector-icons";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AppStackParams } from "../../types/navigation";
-import { StartupResponse } from "../../types/startup";
-import { AvaliacaoResponse, AvaliacaoRequest } from "../../types/avaliacao";
+
 import { getStartupByCNPJ } from "../../api/startup";
 import { getUserByCPF } from "../../api/usuario";
-import { postAvaliacao } from "../../api/avaliacao";
+import { AvaliacaoResponse } from "../../types/avaliacao";
 import {
   getPossuiByStartup,
   createPossui,
   deletePossui,
 } from "../../api/possui";
 import { getAllHabilidades } from "../../api/habilidade";
-import { SafeAreaView } from "react-native-safe-area-context";
-import YoutubePlayer from "react-native-youtube-iframe";
 
 import { useTheme } from "../../context/ThemeContext";
-import { globalStyles } from "../../styles/global";
 import { useAuth } from "../../context/AuthContext";
+import { globalStyles } from "../../styles/global";
+
+import StarsDisplay from "../../components/StarsDisplay";
+import NewAvaliacaoForm from "../../components/NewAvaliacaoForm";
 
 type Props = NativeStackScreenProps<AppStackParams, "StartupDetails">;
 
-/* -------------------------
- * Helpers
- * ------------------------- */
 function extractYT(url?: string | null) {
   if (!url) return null;
   const regex =
@@ -47,32 +45,30 @@ function extractYT(url?: string | null) {
   return match ? match[1] : null;
 }
 
-/* -------------------------
- * Hooks locais (data fetching)
- * ------------------------- */
 function useStartupDetails(cnpj?: string | null) {
-  const [startup, setStartup] = useState<StartupResponse | null>(null);
+  const [startup, setStartup] = useState<any>(null);
   const [avaliacoes, setAvaliacoes] = useState<
     Array<AvaliacaoResponse & { usuario?: any | null }>
   >([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
+
     if (!cnpj) {
-      setLoading(false);
       setStartup(null);
       setAvaliacoes([]);
+      setLoading(false);
       return;
     }
 
     async function load() {
       setLoading(true);
-      setError(null);
       try {
         const data = await getStartupByCNPJ(cnpj!);
         if (!mounted) return;
+
         setStartup(data || null);
 
         const evals = data?.avaliacoes ?? [];
@@ -88,29 +84,29 @@ function useStartupDetails(cnpj?: string | null) {
               }
             })
           );
-          if (!mounted) return;
-          setAvaliacoes(
-            attached as Array<AvaliacaoResponse & { usuario?: any | null }>
-          );
+
+          if (mounted) setAvaliacoes(attached);
         } else {
           setAvaliacoes([]);
         }
       } catch (err: any) {
-        if (mounted) setError(err?.message || "Erro ao carregar startup");
+        if (mounted) setError(err.message || "Erro ao carregar startup");
       } finally {
         if (mounted) setLoading(false);
       }
     }
 
     load();
+
     return () => {
       mounted = false;
     };
   }, [cnpj]);
 
   const prependAvaliacao = useCallback(
-    (a: AvaliacaoResponse & { usuario?: any | null }) =>
-      setAvaliacoes((prev) => [a, ...prev]),
+    (a: AvaliacaoResponse & { usuario?: any | null }) => {
+      setAvaliacoes((prev) => [a, ...prev]);
+    },
     []
   );
 
@@ -119,8 +115,6 @@ function useStartupDetails(cnpj?: string | null) {
     avaliacoes,
     loading,
     error,
-    setStartup,
-    setAvaliacoes,
     prependAvaliacao,
   };
 }
@@ -128,38 +122,38 @@ function useStartupDetails(cnpj?: string | null) {
 function useStartupHabilidades(cnpj?: string | null) {
   const [possuiList, setPossuiList] = useState<any[]>([]);
   const [allHabilidades, setAllHabilidades] = useState<any[]>([]);
-  const [loadingHab, setLoadingHab] = useState<boolean>(true);
-  const [errorHab, setErrorHab] = useState<string | null>(null);
+  const [loadingHab, setLoadingHab] = useState(true);
 
   useEffect(() => {
     let mounted = true;
-    if (!cnpj) {
-      setPossuiList([]);
-      setAllHabilidades([]);
-      setLoadingHab(false);
-      return;
-    }
 
     async function load() {
+      if (!cnpj) {
+        setPossuiList([]);
+        setAllHabilidades([]);
+        setLoadingHab(false);
+        return;
+      }
+
       setLoadingHab(true);
-      setErrorHab(null);
+
       try {
-        const p = await getPossuiByStartup(cnpj!);
+        const p = await getPossuiByStartup(cnpj);
         if (!mounted) return;
         setPossuiList(p);
 
-        const habs = await getAllHabilidades(20);
+        const all = await getAllHabilidades(1);
         if (!mounted) return;
-        const items = (habs && (habs.items ?? habs)) || [];
+
+        const items = all.items ?? all;
         setAllHabilidades(
-          items.map((h: any) => ({
-            idHabilidade: h.idHabilidade,
-            nomeHabilidade: h.nomeHabilidade,
-            tipoHabilidade: h.tipoHabilidade,
+          items.map((i: any) => ({
+            idHabilidade: i.idHabilidade,
+            nomeHabilidade: i.nomeHabilidade,
+            tipoHabilidade: i.tipoHabilidade,
           }))
         );
-      } catch (err: any) {
-        if (mounted) setErrorHab(err?.message || "Erro ao carregar habilidades");
+      } catch {
       } finally {
         if (mounted) setLoadingHab(false);
       }
@@ -173,7 +167,8 @@ function useStartupHabilidades(cnpj?: string | null) {
 
   const addHabilidade = useCallback(
     async (idHabilidade: number) => {
-      if (!cnpj) throw new Error("cnpj ausente");
+      if (!cnpj) return;
+
       await createPossui(cnpj, idHabilidade);
       const updated = await getPossuiByStartup(cnpj);
       setPossuiList(updated);
@@ -196,163 +191,47 @@ function useStartupHabilidades(cnpj?: string | null) {
     possuiList,
     allHabilidades,
     loadingHab,
-    errorHab,
     addHabilidade,
     removeHabilidade,
   };
-}
-
-function StarsDisplay({ value, size = 18 }: { value: number; size?: number }) {
-  const full = Math.floor(value);
-  const half = value % 1 >= 0.5;
-  const stars = [];
-  for (let i = 1; i <= 5; i++) {
-    if (i <= full) stars.push(<Ionicons key={i} name="star" size={size} color="#FFD700" />);
-    else if (i === full + 1 && half) stars.push(<Ionicons key={i} name="star-half" size={size} color="#FFD700" />);
-    else stars.push(<Ionicons key={i} name="star-outline" size={size} color="#FFD700" />);
-  }
-  return <View style={{ flexDirection: "row" }}>{stars}</View>;
-}
-
-function StarsInput({ rating, setRating, max = 10 }: { rating: number; setRating: (n: number) => void; max?: number }) {
-  return (
-    <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-      {[...Array(max)].map((_, i) => {
-        const filled = i < rating;
-        return (
-          <TouchableOpacity key={i} onPress={() => setRating(i + 1)} style={{ padding: 4 }}>
-            <Ionicons name={filled ? "star" : "star-outline"} size={22} color="#FFD700" />
-          </TouchableOpacity>
-        );
-      })}
-    </View>
-  );
-}
-
-function NewAvaliacaoForm({
-  startupCNPJ,
-  onSuccess,
-  styles,
-  colors,
-}: {
-  startupCNPJ: string;
-  onSuccess: (newAvaliacao: AvaliacaoResponse & { usuario?: any | null }) => void;
-  styles: ReturnType<typeof globalStyles>;
-  colors: ReturnType<typeof useTheme>["colors"];
-}) {
-  const { user } = useAuth();
-  const [rating, setRating] = useState<number>(0);
-  const [comentario, setComentario] = useState<string>("");
-  const [sending, setSending] = useState<boolean>(false);
-
-  const handleSend = useCallback(async () => {
-    if (!rating) {
-      Alert.alert("Atenção", "Dê uma nota antes de enviar.");
-      return;
-    }
-    if (!user?.cpf) {
-      Alert.alert("Erro", "Usuário não identificado.");
-      return;
-    }
-
-    const payload: AvaliacaoRequest = {
-      nota: rating,
-      comentario,
-      usuarioCPF: user.cpf,
-      startupCNPJ,
-    };
-
-    try {
-      setSending(true);
-      const created = await postAvaliacao(payload);
-
-      let autor = undefined;
-      try {
-        autor = await getUserByCPF(user.cpf);
-      } catch {
-        autor = undefined;
-      }
-
-      const newAvaliacao = { ...created, usuario: autor };
-      onSuccess(newAvaliacao);
-
-      setRating(0);
-      setComentario("");
-    } catch (err) {
-      console.error("Erro ao enviar avaliacao:", err);
-      Alert.alert("Erro", "Não foi possível enviar a avaliação.");
-    } finally {
-      setSending(false);
-    }
-  }, [rating, comentario, startupCNPJ, user, onSuccess]);
-
-  return (
-    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined}>
-      <View style={[styles.startupCard, { marginTop: 20, gap: 12 }]}>
-        <Text style={styles.tituloHome}>Enviar Avaliação</Text>
-
-        <View>
-          <Text style={styles.dadosStartup}>Sua nota</Text>
-          <StarsInput rating={rating} setRating={setRating} />
-          <Text style={{ color: colors.text, fontSize: 12 }}>{rating} / 10</Text>
-        </View>
-
-        <View style={{ marginTop: 6 }}>
-          <View style={{ flexDirection: "row", alignItems: "center", borderWidth: 1, paddingHorizontal: 10, borderRadius: 10 }}>
-            <TextInput
-              style={{ flex: 1, paddingVertical: 10, color: colors.text }}
-              placeholder="Adicione um comentário..."
-              placeholderTextColor={colors.text}
-              value={comentario}
-              onChangeText={setComentario}
-              multiline
-            />
-            <TouchableOpacity onPress={handleSend} disabled={sending} style={{ padding: 8 }}>
-              <Ionicons name="send" size={22} color={sending ? "#aaa" : colors.text} />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </KeyboardAvoidingView>
-  );
 }
 
 export default function StartupDetails({ route, navigation }: Props) {
   const { colors } = useTheme();
   const styles = globalStyles(colors);
 
-  const cnpj = route.params?.cnpj;
-  const { startup, avaliacoes, loading, error, prependAvaliacao } = useStartupDetails(cnpj);
-  const { possuiList, allHabilidades, loadingHab, errorHab, addHabilidade, removeHabilidade } = useStartupHabilidades(cnpj);
-
   const { user } = useAuth();
-  const isOwner = !!(startup?.usuarioCPF && user?.cpf && startup.usuarioCPF === user.cpf);
 
-  const [showSkillPicker, setShowSkillPicker] = useState<boolean>(false);
-  const [selectedSkillId, setSelectedSkillId] = useState<number | null>(null);
-  const [expandedAval, setExpandedAval] = useState<boolean>(false);
+  const cnpj = route.params?.cnpj;
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedHab, setSelectedHab] = useState<number | null>(null);
 
-  useEffect(() => {
-    console.log("DEBUG StartupDetails:", { cnpj });
-  }, [cnpj]);
+  const { startup, avaliacoes, loading, error, prependAvaliacao } =
+    useStartupDetails(cnpj);
 
-  useEffect(() => {
-    console.log("DEBUG habilidades:", {
-      isOwner,
-      showSkillPicker,
-      selectedSkillId,
-      possuiCount: possuiList?.length ?? 0,
-      allHabilidadesCount: allHabilidades?.length ?? 0,
-      loadingHab,
-      errorHab,
-    });
-  }, [isOwner, showSkillPicker, selectedSkillId, possuiList, allHabilidades, loadingHab, errorHab]);
+  const {
+    possuiList,
+    allHabilidades,
+    loadingHab,
+    addHabilidade,
+    removeHabilidade,
+  } = useStartupHabilidades(cnpj);
 
-  const videoId = useMemo(() => extractYT(startup?.video ?? ""), [startup?.video]);
+  const isOwner =
+    startup?.usuarioCPF && user?.cpf && startup.usuarioCPF === user.cpf;
+
+  const [expanded, setExpanded] = useState(false);
+
+  const videoId = useMemo(
+    () => extractYT(startup?.video ?? ""),
+    [startup?.video]
+  );
 
   const media = useMemo(() => {
-    if (!avaliacoes || avaliacoes.length === 0) return 0;
-    return avaliacoes.reduce((acc, a) => acc + (a.nota ?? 0), 0) / avaliacoes.length;
+    if (!avaliacoes.length) return 0;
+    return (
+      avaliacoes.reduce((acc, a) => acc + (a.nota ?? 0), 0) / avaliacoes.length
+    );
   }, [avaliacoes]);
 
   const openLink = useCallback(async (url?: string | null) => {
@@ -360,89 +239,64 @@ export default function StartupDetails({ route, navigation }: Props) {
     try {
       const supported = await Linking.canOpenURL(url);
       if (supported) await Linking.openURL(url);
-    } catch (err) {
-      console.warn("Erro abrindo link:", err);
-    }
+    } catch {}
   }, []);
 
-  if (loading) {
+  if (loading)
     return (
-      <View>
+      <View style={{ padding: 20 }}>
         <ActivityIndicator size="large" />
       </View>
     );
-  }
 
-  if (error) {
+  if (error)
     return (
       <View>
         <Text style={styles.textButton}>Erro: {error}</Text>
       </View>
     );
-  }
 
-  if (!startup) {
+  if (!startup)
     return (
       <View>
         <Text style={styles.textButton}>Startup não encontrada.</Text>
       </View>
     );
-  }
 
-  const visibleAvaliacoes = expandedAval ? avaliacoes : avaliacoes.slice(0, 1);
-
-  const handleOpenPicker = useCallback(() => {
-    setSelectedSkillId(null);
-    setShowSkillPicker(true);
-  }, []);
-
-  const handleCancelPicker = useCallback(() => {
-    setSelectedSkillId(null);
-    setShowSkillPicker(false);
-  }, []);
-
-  const handleConfirmAdd = useCallback(async () => {
-    if (!selectedSkillId) {
-      Alert.alert("Atenção", "Selecione uma habilidade para adicionar.");
-      return;
-    }
-    try {
-      await addHabilidade(selectedSkillId);
-      Alert.alert("Sucesso", "Habilidade adicionada.");
-      setShowSkillPicker(false);
-      setSelectedSkillId(null);
-    } catch (err) {
-      console.error("Erro ao adicionar habilidade:", err);
-      Alert.alert("Erro", "Não foi possível adicionar a habilidade.");
-    }
-  }, [selectedSkillId, addHabilidade]);
+  const visible = expanded ? avaliacoes : avaliacoes.slice(0, 1);
 
   return (
     <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
-  
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
         {videoId ? (
           <View style={styles.videoContainer}>
             <YoutubePlayer height={220} play={false} videoId={videoId} />
           </View>
         ) : (
-          <Image source={require("../../../assets/placeholders/video.png")} style={{ width: "100%", height: 200 }} />
+          <Image
+            source={require("../../../assets/placeholders/video.png")}
+            style={{ width: "100%", height: 200 }}
+          />
         )}
 
-        {/* Header */}
         <View style={styles.startupCard}>
           <Text style={styles.tituloHome}>{startup.nomeStartup}</Text>
           <Text style={styles.dadosStartup}>Email: {startup.emailStartup}</Text>
           <Text style={styles.dadosStartup}>CNPJ: {startup.cnpj}</Text>
 
           {startup.site && (
-            <TouchableOpacity style={styles.buttonProfile} onPress={() => openLink(startup.site)}>
+            <TouchableOpacity
+              style={styles.buttonProfile}
+              onPress={() => openLink(startup.site)}
+            >
               <Text style={styles.textOutroButton}>Visitar Site</Text>
             </TouchableOpacity>
           )}
         </View>
 
-        {/* Descrição */}
         <View style={[styles.startupCard, { paddingBottom: 30, gap: 30 }]}>
           <Text style={styles.dadosStartup}>Descrição do projeto</Text>
           <Text style={styles.textButton}>{startup.descricao}</Text>
@@ -451,25 +305,37 @@ export default function StartupDetails({ route, navigation }: Props) {
           <Text style={styles.textButton}>{startup.nomeResponsavel}</Text>
         </View>
 
-        {/* Habilidades */}
         <View style={[styles.startupCard, { gap: 16, paddingBottom: 20 }]}>
           <Text style={styles.dadosStartup}>Habilidades</Text>
 
           {loadingHab ? (
             <ActivityIndicator size="small" />
           ) : possuiList.length === 0 ? (
-            <Text style={styles.textButton}>Nenhuma habilidade cadastrada.</Text>
+            <Text style={styles.textButton}>
+              Nenhuma habilidade cadastrada.
+            </Text>
           ) : (
             possuiList.map((p) => (
-              <View key={p.idPossui} style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 8 }}>
+              <View
+                key={p.idPossui}
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  paddingVertical: 8,
+                }}
+              >
                 <View>
-                  <Text style={styles.textButton}>{p.habilidade.nomeHabilidade}</Text>
-                  <Text style={styles.textButton}>{p.habilidade.tipoHabilidade}</Text>
+                  <Text style={styles.textButton}>
+                    {p.habilidade.nomeHabilidade}
+                  </Text>
+                  <Text style={styles.textButton}>
+                    {p.habilidade.tipoHabilidade}
+                  </Text>
                 </View>
 
                 {isOwner && (
                   <TouchableOpacity
-                    onPress={() => {
+                    onPress={() =>
                       Alert.alert(
                         "Remover habilidade",
                         `Remover ${p.habilidade.nomeHabilidade}?`,
@@ -481,15 +347,17 @@ export default function StartupDetails({ route, navigation }: Props) {
                             onPress: async () => {
                               try {
                                 await removeHabilidade(p.idPossui);
-                              } catch (err) {
-                                console.error(err);
-                                Alert.alert("Erro", "Não foi possível remover a habilidade.");
+                              } catch {
+                                Alert.alert(
+                                  "Erro",
+                                  "Não foi possível remover a habilidade."
+                                );
                               }
                             },
                           },
                         ]
-                      );
-                    }}
+                      )
+                    }
                   >
                     <Ionicons name="trash-outline" size={22} color="red" />
                   </TouchableOpacity>
@@ -498,99 +366,83 @@ export default function StartupDetails({ route, navigation }: Props) {
             ))
           )}
 
-          {/* botão adicionar (visível ao owner) */}
           {isOwner && (
-            <View>
-              <TouchableOpacity onPress={handleOpenPicker}>
-                <Text style={styles.textOutroButton}>{showSkillPicker ? "Escolher outra habilidade" : "Adicionar nova habilidade"}</Text>
-              </TouchableOpacity>
-
-              {showSkillPicker && (
-                <View style={{ marginTop: 10, padding: 8, borderRadius: 8, backgroundColor: "#f5f5f5" }}>
-                  {allHabilidades.length === 0 ? (
-                    <Text style={styles.textButton}>Nenhuma habilidade disponível para adicionar.</Text>
-                  ) : (
-                    <>
-                      <Text style={[styles.dadosStartup, { marginBottom: 8 }]}>Escolha uma habilidade</Text>
-                      {allHabilidades.map((hab) => {
-                        const already = possuiList.some((p) => p.habilidade?.idHabilidade === hab.idHabilidade);
-                        return (
-                          <TouchableOpacity
-                            key={hab.idHabilidade}
-                            onPress={() => setSelectedSkillId(hab.idHabilidade)}
-                            disabled={already}
-                            style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                              paddingVertical: 10,
-                              paddingHorizontal: 8,
-                              borderRadius: 8,
-                              backgroundColor: selectedSkillId === hab.idHabilidade ? "#e0e0e0" : "transparent",
-                              opacity: already ? 0.5 : 1,
-                              marginBottom: 6,
-                            }}
-                          >
-                            <View>
-                              <Text style={styles.textButton}>{hab.nomeHabilidade}</Text>
-                              <Text style={styles.textButton}>{hab.tipoHabilidade}</Text>
-                            </View>
-                            {already ? (
-                              <Text style={[styles.textButton, { fontSize: 12 }]}>Vinculada</Text>
-                            ) : selectedSkillId === hab.idHabilidade ? (
-                              <Ionicons name="checkmark-circle" size={20} />
-                            ) : null}
-                          </TouchableOpacity>
-                        );
-                      })}
-
-                      <View style={{ flexDirection: "row", gap: 12, marginTop: 8 }}>
-                        <TouchableOpacity onPress={handleConfirmAdd} style={{ padding: 10 }}>
-                          <Text style={styles.textOutroButton}>Adicionar</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={handleCancelPicker} style={{ padding: 10 }}>
-                          <Text style={[styles.textOutroButton, { color: "#888" }]}>Cancelar</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </>
-                  )}
-                </View>
-              )}
-            </View>
+            <TouchableOpacity
+              onPress={() => {
+                console.log("Abrindo modal de habilidades...");
+                if (allHabilidades.length === 0) {
+                  Alert.alert("Ops", "Nenhuma habilidade disponível.");
+                  return;
+                }
+                setSelectedHab(allHabilidades[0]?.idHabilidade ?? null);
+                setModalVisible(true);
+              }}
+            >
+              <Text style={styles.textOutroButton}>
+                Adicionar nova habilidade
+              </Text>
+            </TouchableOpacity>
           )}
         </View>
 
-        {/* Notas e média */}
-        <View style={[styles.startupCard]}>
+        <View style={styles.startupCard}>
           <Text style={styles.tituloHome}>Notas e avaliações</Text>
-          <Text style={styles.dadosStartup}>Avaliações criadas por usuários cadastrados no aplicativo.</Text>
+          <Text style={styles.dadosStartup}>
+            Avaliações criadas por usuários cadastrados no app.
+          </Text>
         </View>
 
-        <View style={[styles.startupCard, { marginTop: 0, borderBottomWidth: 0 }]}>
-          <Text style={[styles.tituloHome]}>{media.toFixed(1)} / 10</Text>
+        <View style={[styles.startupCard, { marginTop: 0 }]}>
+          <Text style={styles.tituloHome}>{media.toFixed(1)} / 10</Text>
           <StarsDisplay value={media / 2} />
         </View>
 
-        {avaliacoes && avaliacoes.length > 0 ? (
+        {avaliacoes.length ? (
           <>
-            {visibleAvaliacoes.map((a) => (
+            {visible.map((a) => (
               <View key={a.idAvaliacao}>
-                <View style={[styles.startupCard, { marginTop: 10, borderBottomWidth: 0 }]}>
-                  <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                    <Ionicons name="person-circle-outline" size={28} style={styles.iconUserHome} />
-                    <Text style={styles.textButton}>{a.usuario?.nome ?? "Usuário"}</Text>
+                <View
+                  style={[
+                    styles.startupCard,
+                    { marginTop: 10, borderBottomWidth: 0 },
+                  ]}
+                >
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 10,
+                    }}
+                  >
+                    <Ionicons
+                      name="person-circle-outline"
+                      size={28}
+                      style={styles.iconUserHome}
+                    />
+                    <Text style={styles.textButton}>
+                      {a.usuario?.nome ?? "Usuário"}
+                    </Text>
                   </View>
+
                   <View style={{ marginTop: 6 }}>
                     <StarsDisplay value={(a.nota ?? 0) / 2} />
                   </View>
-                  <Text style={[styles.textButton, { marginTop: 6 }]}>{a.comentario || "Sem comentário"}</Text>
+
+                  <Text style={[styles.textButton, { marginTop: 6 }]}>
+                    {a.comentario || "Sem comentário"}
+                  </Text>
                 </View>
               </View>
             ))}
 
             {avaliacoes.length > 1 && (
-              <TouchableOpacity style={[styles.buttonProfile, { marginVertical: 20 }]} onPress={() => setExpandedAval((prev) => !prev)}>
-                <Text style={styles.textOutroButton}>{expandedAval ? "Ver menos" : "Ver todas"}</Text>
+              <TouchableOpacity
+                style={[styles.buttonProfile, { marginVertical: 20 }]}
+                onPress={() => setExpanded((prev) => !prev)}
+              >
+                <Text style={styles.textOutroButton}>
+                  {expanded ? "Ver menos" : "Ver todas"}
+                </Text>
               </TouchableOpacity>
             )}
           </>
@@ -598,9 +450,116 @@ export default function StartupDetails({ route, navigation }: Props) {
           <Text style={styles.textButton}>Nenhuma avaliação ainda.</Text>
         )}
 
-        <NewAvaliacaoForm startupCNPJ={startup.cnpj} styles={styles} colors={colors} onSuccess={(newA) => prependAvaliacao(newA as any)} />
+        {/* MODAL PARA ESCOLHER HABILIDADE */}
+        <Modal
+          visible={modalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: "rgba(0,0,0,0.5)",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 20,
+            }}
+          >
+            <View
+              style={{
+                width: "100%",
+                padding: 20,
+                borderRadius: 12,
+                gap: 16,
+              }}
+            >
+              <Text style={[styles.dadosStartup, { fontSize: 18 }]}>
+                Selecione a habilidade
+              </Text>
 
-        <TouchableOpacity style={[styles.buttonProfile, { marginBottom: 40, marginTop: 10 }]} onPress={() => navigation.goBack()}>
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderRadius: 8,
+                }}
+              >
+                <Picker
+                  selectedValue={selectedHab}
+                  onValueChange={(v) => {
+                    console.log("Habilidade selecionada:", v);
+                    setSelectedHab(v);
+                  }}
+                >
+                  {allHabilidades.map((h) => (
+                    <Picker.Item
+                      key={h.idHabilidade}
+                      label={`${h.nomeHabilidade} (${h.tipoHabilidade})`}
+                      value={h.idHabilidade}
+                    />
+                  ))}
+                </Picker>
+              </View>
+
+              {/* BOTÃO ADICIONAR */}
+              <TouchableOpacity
+                style={styles.buttonProfile}
+                onPress={async () => {
+                  if (!selectedHab) return;
+
+                  try {
+                    console.log("Adicionando habilidade:", selectedHab);
+                    await addHabilidade(selectedHab);
+                    console.log("Habilidade adicionada!");
+
+                    setModalVisible(false);
+                  } catch (err) {
+                    console.log("Erro ao adicionar habilidade:", err);
+                    Alert.alert(
+                      "Erro",
+                      "Não foi possível adicionar a habilidade."
+                    );
+                  }
+                }}
+              >
+                <Text style={styles.textOutroButton}>Adicionar</Text>
+              </TouchableOpacity>
+
+              {/* BOTÃO PARA CRIAR NOVA HABILIDADE */}
+              <TouchableOpacity
+                style={[styles.buttonProfile, { backgroundColor: "#4b7bec" }]}
+                onPress={() => {
+                  setModalVisible(false);
+                  navigation.navigate('RegisterAbility')
+                }}
+              >
+                <Text style={styles.textOutroButton}>
+                  Criar nova habilidade
+                </Text>
+              </TouchableOpacity>
+
+              {/* CANCELAR */}
+              <TouchableOpacity
+                style={[styles.buttonProfile, { backgroundColor: "gray" }]}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.textOutroButton}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        <NewAvaliacaoForm
+          startupCNPJ={startup.cnpj}
+          styles={styles}
+          colors={colors}
+          onSuccess={(newA) => prependAvaliacao(newA)}
+        />
+
+        <TouchableOpacity
+          style={[styles.buttonProfile, { marginTop: 10, marginBottom: 40 }]}
+          onPress={() => navigation.goBack()}
+        >
           <Text style={styles.textOutroButton}>Voltar</Text>
         </TouchableOpacity>
       </ScrollView>
