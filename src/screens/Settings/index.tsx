@@ -59,7 +59,7 @@ export default function SettingsScreen({ navigation }: any) {
         <View style={[styles.formCorpo, { gap: 30,  borderBottomWidth: 3, borderColor:colors.borda, paddingBottom: 50 }]}>
           <Text style={styles.tituloHome}>Configurações</Text>
 
-          <TouchableOpacity style={styles.buttonConfig}>
+          <TouchableOpacity style={styles.buttonConfig} onPress={() => navigation.navigate('EditProfile')}>
             <Text style={styles.textOutroButton}>Editar Perfil</Text>
           </TouchableOpacity>
 
