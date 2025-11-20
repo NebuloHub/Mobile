@@ -8,6 +8,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { globalStyles } from "../../styles/global";
 import { useState } from "react";
 
+
 export default function SettingsScreen({ navigation }: any) {
   const { signOut, user } = useAuth();
   const [openLanguage, setOpenLanguage] = useState(false);
@@ -54,27 +55,27 @@ export default function SettingsScreen({ navigation }: any) {
 
   return (
     <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
-      <ScrollView>
-        <View>
-          <Text>Configurações</Text>
+      <ScrollView contentContainerStyle={styles.forms}>
+        <View style={[styles.formCorpo, { gap: 30,  borderBottomWidth: 3, borderColor:colors.borda, paddingBottom: 50 }]}>
+          <Text style={styles.tituloHome}>Configurações</Text>
 
-          <TouchableOpacity>
-            <Text>Editar Perfil</Text>
+          <TouchableOpacity style={styles.buttonConfig}>
+            <Text style={styles.textOutroButton}>Editar Perfil</Text>
           </TouchableOpacity>
 
           <View>
-            <TouchableOpacity onPress={() => setOpenLanguage(!open)}>
-              <Text>{t("components.titleLanguage")}</Text>
+            <TouchableOpacity style={[styles.buttonConfig, {flexDirection: "row", justifyContent: "space-between", alignItems: "center"}]} onPress={() => setOpenLanguage(!openLanguage)}>
+              <Text style={styles.textOutroButton}>{t("components.titleLanguage")}</Text>
               <Ionicons name="chevron-down-outline" size={24} color="#FFD700" />
             </TouchableOpacity>
             {openLanguage && (
-              <View>
+              <View style={ { gap: 10, paddingHorizontal: 20}}>
                 {langs.map((lang) => (
                   <TouchableOpacity
                     key={lang.code}
                     onPress={() => changeLanguage(lang.code)}
                   >
-                    <Text>{lang.label}</Text>
+                    <Text style={styles.dadosStartup}>{lang.label}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -82,40 +83,40 @@ export default function SettingsScreen({ navigation }: any) {
           </View>
 
           <View>
-            <TouchableOpacity onPress={() => setOpenTheme(!openTheme)}>
-              <Text>Tema</Text>
+            <TouchableOpacity style={[styles.buttonConfig, {flexDirection: "row", justifyContent: "space-between", alignItems: "center"}]} onPress={() => setOpenTheme(!openTheme)}>
+              <Text style={styles.textOutroButton}>Tema</Text>
               <Ionicons name="chevron-down-outline" size={24} color="#FFD700" />
             </TouchableOpacity>
             {openTheme && (
-              <View>
+              <View style={ { gap: 10, paddingHorizontal: 20}}>
                 <TouchableOpacity onPress={setDarkTheme}>
-                  <Text>Escuro</Text>
+                  <Text style={styles.dadosStartup}>Escuro</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={setLightTheme}>
-                  <Text>Claro</Text>
+                  <Text style={styles.dadosStartup}>Claro</Text>
                 </TouchableOpacity>
               </View>
             )}
           </View>
 
-          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-            <Text>Mudar de Conta</Text>
+          <TouchableOpacity style={styles.buttonConfig} onPress={() => navigation.navigate("Login")}>
+            <Text style={styles.textOutroButton}>Mudar de Conta</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-            <Text>Criar outra conta</Text>
+          <TouchableOpacity style={styles.buttonConfig} onPress={() => navigation.navigate("Register")}>
+            <Text style={styles.textOutroButton}>Criar outra conta</Text>
           </TouchableOpacity>
         </View>
 
-        <View>
-          <Text>Conta</Text>
+        <View style={[styles.formCorpo, { gap: 30 }]}>
+          <Text style={styles.dadosStartup}>Conta</Text>
 
-          <TouchableOpacity onPress={handleDeleteUser}>
-            <Text>Apagar Conta</Text>
+          <TouchableOpacity style={[styles.buttonConfig, { borderColor: "#E60000" }]} onPress={handleDeleteUser}>
+            <Text style={[styles.textOutroButton, { color: "#E60000" }]}>Apagar Conta</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={signOut}>
-            <Text>Deslogar</Text>
+          <TouchableOpacity style={[styles.buttonConfig, { borderColor: "#E60000" }]} onPress={signOut}>
+            <Text style={[styles.textOutroButton, { color: "#E60000" }]}>Deslogar</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

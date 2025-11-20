@@ -390,4 +390,17 @@ export const globalStyles= (colors: typeof themeColors.light) => StyleSheet.crea
         color: "#333",
     },
 
+
+    //----------------------------------------------------
+    //                Componente Pesquisa
+    //----------------------------------------------------
+
+    buttonConfig: {
+      marginBottom: 10,
+      borderWidth: 2,
+      borderColor: "#FFB100",
+      padding: 12,
+      borderRadius: 20,
+    },
+
 })
