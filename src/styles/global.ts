@@ -232,7 +232,7 @@ export const globalStyles= (colors: typeof themeColors.light) => StyleSheet.crea
 
     profile: {
         paddingTop: 60,
-        gap:60,
+        gap:10,
     },
 
 
@@ -337,6 +337,7 @@ export const globalStyles= (colors: typeof themeColors.light) => StyleSheet.crea
         marginTop: 50, 
         paddingHorizontal: 15, 
         gap:10,
+
     },
 
 })
