@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   ActivityIndicator,
   Image,
@@ -11,7 +10,9 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Camera } from "expo-camera";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
+
 import { useAuth } from "../../context/AuthContext";
 import { getUserByCPF } from "../../api/usuario";
 import StartupCard from "../../components/StartupCard";
@@ -20,9 +21,30 @@ import { UserResponse } from "../../types/usuario";
 import { useTheme } from "../../context/ThemeContext";
 import { globalStyles } from "../../styles/global";
 
+// ----------------------------------------------
+// STORAGE (somente AsyncStorage)
+// ----------------------------------------------
+const PROFILE_PHOTO_KEY = "@profile_photo";
+
+async function saveProfilePhoto(uri: string) {
+  try {
+    await AsyncStorage.setItem(PROFILE_PHOTO_KEY, uri);
+  } catch (e) {
+    console.log("Erro ao salvar foto:", e);
+  }
+}
+
+async function loadProfilePhoto() {
+  try {
+    return await AsyncStorage.getItem(PROFILE_PHOTO_KEY);
+  } catch (e) {
+    console.log("Erro ao carregar foto:", e);
+    return null;
+  }
+}
+
 export default function ProfileScreen({ navigation }: any) {
   const { user } = useAuth();
-
   const { colors } = useTheme();
   const styles = globalStyles(colors);
 
@@ -35,6 +57,9 @@ export default function ProfileScreen({ navigation }: any) {
   const [showZoom, setShowZoom] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
 
+  // ----------------------------------------------
+  // CARREGA DADOS DO USUÁRIO
+  // ----------------------------------------------
   const loadUser = useCallback(async () => {
     try {
       setLoading(true);
@@ -53,6 +78,20 @@ export default function ProfileScreen({ navigation }: any) {
     loadUser();
   }, [loadUser]);
 
+  // ----------------------------------------------
+  // CARREGA IMAGEM DO ASYNCSTORAGE
+  // ----------------------------------------------
+  useEffect(() => {
+    const loadPhoto = async () => {
+      const saved = await loadProfilePhoto();
+      if (saved) setProfileImage({ uri: saved });
+    };
+    loadPhoto();
+  }, []);
+
+  // ----------------------------------------------
+  // GALERIA
+  // ----------------------------------------------
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -60,11 +99,17 @@ export default function ProfileScreen({ navigation }: any) {
     });
 
     if (!result.canceled) {
-      setProfileImage({ uri: result.assets[0].uri });
+      const uri = result.assets[0].uri;
+      setProfileImage({ uri });
+      saveProfilePhoto(uri);
     }
+
     setShowOptions(false);
   };
 
+  // ----------------------------------------------
+  // CÂMERA
+  // ----------------------------------------------
   const takePhoto = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
     if (status !== "granted") {
@@ -75,13 +120,20 @@ export default function ProfileScreen({ navigation }: any) {
     const result = await ImagePicker.launchCameraAsync({ quality: 0.8 });
 
     if (!result.canceled) {
-      setProfileImage({ uri: result.assets[0].uri });
+      const uri = result.assets[0].uri;
+      setProfileImage({ uri });
+      saveProfilePhoto(uri);
     }
+
     setShowOptions(false);
   };
 
-  const removePhoto = () => {
+  // ----------------------------------------------
+  // REMOVER FOTO
+  // ----------------------------------------------
+  const removePhoto = async () => {
     setProfileImage(defaultImage);
+    await AsyncStorage.removeItem(PROFILE_PHOTO_KEY);
     setShowOptions(false);
   };
 
@@ -93,6 +145,9 @@ export default function ProfileScreen({ navigation }: any) {
     );
   }
 
+  // ----------------------------------------------
+  // RENDER
+  // ----------------------------------------------
   return (
     <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
       <ScrollView contentContainerStyle={styles.profile}>
@@ -106,38 +161,36 @@ export default function ProfileScreen({ navigation }: any) {
               <Info label="Telefone" value={fullUser.telefone || "—"} />
             </View>
 
-            <View>
-              <TouchableOpacity onPress={() => setShowOptions(true)}>
-                <Image source={profileImage} style={styles.profileImage} />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View>
-            <TouchableOpacity style={styles.buttonProfile} onPress={() => navigation.navigate('EditProfile')}>
-              <Text style={styles.textOutroButton}>Editar Perfil</Text>
+            <TouchableOpacity onPress={() => setShowOptions(true)}>
+              <Image source={profileImage} style={styles.profileImage} />
             </TouchableOpacity>
           </View>
+
+          <TouchableOpacity
+            style={styles.buttonProfile}
+            onPress={() => navigation.navigate("EditProfile")}
+          >
+            <Text style={styles.textOutroButton}>Editar Perfil</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Startups */}
         {fullUser.startups?.length ? (
           fullUser.startups.map((st) => (
-            <View key={st.cnpj}>
-              <StartupCard
-                data={st}
-                onPress={() =>
-                  navigation.navigate("StartupDetails", { cnpj: st.cnpj })
-                }
-              />
-            </View>
+            <StartupCard
+              key={st.cnpj}
+              data={st}
+              onPress={() =>
+                navigation.navigate("StartupDetails", { cnpj: st.cnpj })
+              }
+            />
           ))
         ) : (
           <Text>Você ainda não cadastrou nenhuma Startup.</Text>
         )}
       </ScrollView>
 
-      {/* Opções da Foto */}
+      {/* Opções */}
       {showOptions && (
         <View style={styles.overlay}>
           <TouchableOpacity
@@ -155,7 +208,7 @@ export default function ProfileScreen({ navigation }: any) {
         </View>
       )}
 
-      {/* Zoom da Foto */}
+      {/* Zoom */}
       <Modal visible={showZoom} transparent>
         <View style={styles.zoomContainer}>
           <TouchableOpacity onPress={() => setShowZoom(false)}>
@@ -173,6 +226,9 @@ export default function ProfileScreen({ navigation }: any) {
   );
 }
 
+// ----------------------------------------------
+// COMPONENTES AUXILIARES
+// ----------------------------------------------
 function Info({ label, value }: any) {
   return (
     <View

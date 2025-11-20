@@ -1,5 +1,5 @@
 import { AvaliacaoResponse } from "./avaliacao";
-import { Habilidade } from "./habilidade";
+import { HabilidadeResponse } from "./habilidade";
 import { UserResponse } from "./usuario";
 
 
@@ -22,7 +22,7 @@ export interface StartupResponse{
   nomeResponsavel:UserResponse["nome"];
   emailStartup: string;
   usuarioCPF:UserResponse["cpf"];
-  habilidades:Habilidade[];
+  habilidades:HabilidadeResponse[];
   avaliacoes:AvaliacaoResponse[];
 }
 
