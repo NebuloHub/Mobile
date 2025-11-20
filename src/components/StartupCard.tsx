@@ -4,8 +4,8 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  StyleSheet,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AllStartupsResponse, StartupResponse } from "../types/startup";
@@ -17,6 +17,9 @@ import { getUserByCPF } from "../api/usuario";
 import { useTheme } from "../context/ThemeContext";
 import { globalStyles } from "../styles/global";
 
+import { t } from "../i18n";
+import { useLanguage } from "../context/LanguageContext";
+
 interface Props {
   data: AllStartupsResponse | StartupResponse;
   onPress?: () => void;
@@ -27,7 +30,7 @@ export default function StartupCard({ data, onPress }: Props) {
   const { colors } = useTheme();
   const styles = globalStyles(colors);
 
-
+  const { lang } = useLanguage();
   const [avaliacoes, setAvaliacoes] = useState<AvaliacaoResponse[]>([]);
   const [user, setUser] = useState<UserResponse>();
   const [loading, setLoading] = useState(true);
@@ -41,7 +44,7 @@ export default function StartupCard({ data, onPress }: Props) {
         const userDetalhe : UserResponse = await getUserByCPF(detalhe.usuarioCPF);
         setUser(userDetalhe)
       } catch (err) {
-        console.log("Erro ao carregar detalhes da startup:", err);
+        Alert.alert(`${t("logs.errorLoadingStartups")} ${err}`);        
       } finally {
         setLoading(false);
       }
@@ -50,7 +53,6 @@ export default function StartupCard({ data, onPress }: Props) {
     loadDetails();
   }, [data.cnpj]);
 
-  // Calcula média da nota
   const mediaNota = avaliacoes.length
     ? avaliacoes.reduce((acc, a) => acc + a.nota, 0) / avaliacoes.length / 2
     : 0;
@@ -86,7 +88,7 @@ export default function StartupCard({ data, onPress }: Props) {
         </View>
 
         <TouchableOpacity style={styles.headerCard}  onPress={onPress}>
-          <Text style={styles.sobreCard}>Sobre...</Text>
+          <Text style={styles.sobreCard}>{t("buttons.titleAbout")}</Text>
         </TouchableOpacity>
 
       </View>

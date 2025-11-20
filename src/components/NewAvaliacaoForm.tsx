@@ -12,16 +12,14 @@ import { Ionicons } from "@expo/vector-icons";
 
 import StarsInput from "./StartsInput";
 
-// 👉 ajustar o caminho
 import { useAuth } from "../context/AuthContext";
-
-// 👉 ajustar o caminho
 import { postAvaliacao } from "../api/avaliacao";
-
-// 👉 ajustar o caminho
 import { getUserByCPF } from "../api/usuario";
 
 import { AvaliacaoRequest, AvaliacaoResponse } from "../types/avaliacao";
+
+import { t } from "../i18n";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function NewAvaliacaoForm({
   startupCNPJ,
@@ -35,18 +33,19 @@ export default function NewAvaliacaoForm({
   colors: any;
 }) {
   const { user } = useAuth();
+  const { lang } = useLanguage();
   const [rating, setRating] = useState(0);
   const [comentario, setComentario] = useState("");
   const [sending, setSending] = useState(false);
 
   const handleSend = useCallback(async () => {
     if (!rating) {
-      Alert.alert("Atenção", "Dê uma nota antes de enviar.");
+      Alert.alert(t("logs.titleAlert"), t("logs.alertNoRate"));
       return;
     }
 
     if (!user?.cpf) {
-      Alert.alert("Erro", "Usuário não identificado.");
+      Alert.alert(t("logs.alertNoRate"), t("logs.errorIdentifiedUser"));
       return;
     }
 
@@ -71,7 +70,7 @@ export default function NewAvaliacaoForm({
       setRating(0);
       setComentario("");
     } catch {
-      Alert.alert("Erro", "Não foi possível enviar a avaliação.");
+      Alert.alert(t("logs.titleError"), t("logs.errorSendRate"));
     } finally {
       setSending(false);
     }
@@ -82,10 +81,10 @@ export default function NewAvaliacaoForm({
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <View style={[styles.startupCard, { marginTop: 20, gap: 12 }]}>
-        <Text style={styles.tituloHome}>Enviar Avaliação</Text>
+        <Text style={styles.tituloHome}>{t("titles.sendRate")}</Text>
 
         <View>
-          <Text style={styles.dadosStartup}>Sua nota</Text>
+          <Text style={styles.dadosStartup}>{t("titles.yourRate")}</Text>
           <StarsInput rating={rating} setRating={setRating} />
           <Text style={{ color: colors.text, fontSize: 12 }}>
             {rating} / 10
@@ -104,7 +103,7 @@ export default function NewAvaliacaoForm({
           >
             <TextInput
               style={{ flex: 1, paddingVertical: 10, color: colors.text }}
-              placeholder="Adicione um comentário..."
+              placeholder={t("fields.placeholderComment")}
               placeholderTextColor={colors.text}
               value={comentario}
               onChangeText={setComentario}

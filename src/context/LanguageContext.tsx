@@ -5,7 +5,9 @@ import {
   useEffect,
   useMemo,
   useState,
+  useContext,
 } from "react";
+
 import i18n, { setLocale, type Lang } from "../i18n";
 
 type LanguageContextType = {
@@ -14,15 +16,15 @@ type LanguageContextType = {
   toggleLang: () => void;
 };
 
-// Define o contexto com valor padrão
+// Contexto
 export const LanguageContext = createContext<LanguageContextType>({
   lang: "pt",
   setLang: () => {},
   toggleLang: () => {},
 });
 
+// Provider
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  // Estado inicial baseado no idioma do i18n
   const [lang, setLangState] = useState<Lang>(
     i18n.locale.startsWith("es")
       ? "es"
@@ -31,7 +33,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       : "pt"
   );
 
-  // Carrega idioma salvo no AsyncStorage
+  // Carrega idioma salvo
   useEffect(() => {
     (async () => {
       try {
@@ -44,27 +46,21 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     })();
   }, []);
 
-  // Função para alterar idioma
   const setLang = useCallback((l: Lang) => {
     setLangState(l);
     setLocale(l);
     AsyncStorage.setItem("lang", l).catch(() => {});
   }, []);
 
-  // Função para alternar idioma ciclando entre pt -> en -> es -> pt...
   const toggleLang = useCallback(() => {
     const nextLang: Lang = lang === "pt" ? "en" : lang === "en" ? "es" : "pt";
     setLang(nextLang);
   }, [lang, setLang]);
 
-  const value = useMemo(
-    () => ({ lang, setLang, toggleLang }),
-    [lang, setLang, toggleLang]
-  );
+  const value = useMemo(() => ({ lang, setLang, toggleLang }), [lang, setLang, toggleLang]);
 
-  return (
-    <LanguageContext.Provider value={value}>
-      {children}
-    </LanguageContext.Provider>
-  );
+  return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
+
+// ✅ Hook para usar o contexto em qualquer componente
+export const useLanguage = () => useContext(LanguageContext);

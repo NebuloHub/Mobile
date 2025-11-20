@@ -16,9 +16,13 @@ import Field from "../../components/Field";
 import { postHabilidade } from "../../api/habilidade";
 import { HabilidadeResquest } from "../../types/habilidade";
 
+import { t } from "../../i18n";
+import { useLanguage } from "../../context/LanguageContext";
+
 export default function RegisterHabilidadeScreen({ navigation }: any) {
   const { colors } = useTheme();
   const styles = globalStyles(colors);
+  const { lang } = useLanguage();
 
   const [form, setForm] = useState<HabilidadeResquest>({
     nomeHabilidade: "",
@@ -41,25 +45,25 @@ export default function RegisterHabilidadeScreen({ navigation }: any) {
 
     if (!form.nomeHabilidade.trim()) {
       newErrors.nomeHabilidade = true;
-      msg = "O nome da habilidade é obrigatório.";
+      msg = t("logs.errorInvalidNameSkill");
     }
 
     if (!form.tipoHabilidade.trim()) {
       newErrors.tipoHabilidade = true;
-      msg = "O tipo da habilidade é obrigatório.";
+      msg = t("logs.errorInvalidTypeSkill");
     }
 
     setErrors(newErrors);
-    if (msg) return Alert.alert("Erro", msg);
+    if (msg) return Alert.alert(t("logs.titleError"), msg);
 
     try {
       const res = await postHabilidade(form);
 
-      Alert.alert("Sucesso!", "Habilidade cadastrada com sucesso!");
+      Alert.alert(t("logs.titleSucess"), t("logs.contexRegisterSkill"));
 
-      navigation.goBack(); // ou navega para listagem se preferir
+      navigation.goBack(); 
     } catch (err: any) {
-      Alert.alert("Erro ao cadastrar", err.response?.data || err.message);
+      Alert.alert(t("logs.titleErrorRegister"), err.response?.data || err.message);
     }
   };
 
@@ -67,15 +71,14 @@ export default function RegisterHabilidadeScreen({ navigation }: any) {
     <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
       <ScrollView contentContainerStyle={styles.forms}>
         <View style={{ alignItems: "center" }}>
-          <Text style={styles.titulo}>Cadastrar Habilidade</Text>
+          <Text style={styles.titulo}>{t("titles.registerSkill")}</Text>
         </View>
 
         <View style={styles.formCorpo}>
-
-          <Field label="Nome da Habilidade" error={errors.nomeHabilidade}>
+          <Field labelKey="fields.labelNameSkill" error={errors.nomeHabilidade}>
             <TextInput
               value={form.nomeHabilidade}
-              placeholder="Ex: Comunicação"
+              placeholder={t("fields.placeholderNameSkill")}
               placeholderTextColor="#888"
               onChangeText={(t) => updateField("nomeHabilidade", t)}
               style={[
@@ -85,10 +88,10 @@ export default function RegisterHabilidadeScreen({ navigation }: any) {
             />
           </Field>
 
-          <Field label="Tipo de Habilidade" error={errors.tipoHabilidade}>
+          <Field labelKey="fields.labelTypeSkill" error={errors.tipoHabilidade}>
             <TextInput
               value={form.tipoHabilidade}
-              placeholder="Ex: Técnica, Comportamental..."
+              placeholder={t("fields.placeholderTypeSkill")}
               placeholderTextColor="#888"
               onChangeText={(t) => updateField("tipoHabilidade", t)}
               style={[
@@ -99,16 +102,15 @@ export default function RegisterHabilidadeScreen({ navigation }: any) {
           </Field>
 
           <TouchableOpacity style={styles.button} onPress={handleRegister}>
-            <Text style={styles.textButton}>Cadastrar</Text>
+            <Text style={styles.textButton}>{t("buttons.titleRegisterAll")}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.outroButton}
             onPress={() => navigation.goBack()}
           >
-            <Text style={styles.textOutroButton}>Voltar</Text>
+            <Text style={styles.textOutroButton}>{t("buttons.titleGoBack")}</Text>
           </TouchableOpacity>
-
         </View>
       </ScrollView>
     </SafeAreaView>

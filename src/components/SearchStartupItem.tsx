@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { AllStartupsResponse, StartupResponse } from "../types/startup";
@@ -9,6 +9,9 @@ import { getStartupByCNPJ } from "../api/startup";
 import { useTheme } from "../context/ThemeContext";
 import { globalStyles } from "../styles/global";
 
+import { t } from "../i18n";
+import { useLanguage } from "../context/LanguageContext";
+
 interface Props {
   data: AllStartupsResponse;
   onPress?: () => void;
@@ -17,7 +20,7 @@ interface Props {
 export default function SearchStartupItem({ data, onPress }: Props) {
   const [avaliacoes, setAvaliacoes] = useState<AvaliacaoResponse[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const { lang } = useLanguage();
   const { colors } = useTheme();
   const styles = globalStyles(colors);
 
@@ -27,7 +30,7 @@ export default function SearchStartupItem({ data, onPress }: Props) {
         const detalhe: StartupResponse = await getStartupByCNPJ(data.cnpj);
         setAvaliacoes(detalhe.avaliacoes || []);
       } catch (err) {
-        console.log("Erro ao carregar avaliações:", err);
+        Alert.alert(`${t("logs.errorLoadRates")} ${err}`);
       } finally {
         setLoading(false);
       }

@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
-  StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaskedTextInput } from "react-native-mask-text";
@@ -20,9 +19,12 @@ import Field from "../../components/Field";
 import { useTheme } from "../../context/ThemeContext";
 import { globalStyles } from "../../styles/global";
 
+import { t } from "../../i18n";
+import { useLanguage } from "../../context/LanguageContext";
+
 export default function RegisterStartupScreen({ navigation }: any) {
   const { user } = useAuth();
-
+  const { lang } = useLanguage();
   const { colors } = useTheme();
   const styles = globalStyles(colors);
 
@@ -69,26 +71,26 @@ export default function RegisterStartupScreen({ navigation }: any) {
 
     if (cnpjNumbers.length !== 14) {
       newErrors.cnpj = true;
-      msg = "CNPJ inválido. Deve conter 14 dígitos.";
+      msg = t("logs.errorInvalidCNPJ");
     } else if (!form.nomeStartup.trim()) {
       newErrors.nomeStartup = true;
-      msg = "O nome da startup é obrigatório.";
+      msg = t("logs.errorInvalidNameStartup");
     } else if (!isValidURL(form.site)) {
       newErrors.site = true;
-      msg = "Insira um site válido (http:// ou https://).";
+      msg = t("logs.errorInvalidWebsite");
     } else if (form.descricao.length < 10) {
       newErrors.descricao = true;
-      msg = "A descrição deve ter pelo menos 10 caracteres.";
+      msg = t("logs.errorInvalidDescription");
     } else if (!isValidEmail(form.emailStartup)) {
       newErrors.emailStartup = true;
-      msg = "E-mail corporativo inválido.";
+      msg = t("logs.errorInvalidEmail");
     } else if (form.video && !isValidURL(form.video)) {
       newErrors.video = true;
-      msg = "URL do vídeo inválida.";
+      msg = t("logs.errorInvalidVideo");
     }
 
     setErrors(newErrors);
-    if (msg) return Alert.alert("Erro", msg);
+    if (msg) return Alert.alert(t("titleError"), msg);
 
     const payload: StartupRequest = {
       ...form,
@@ -97,10 +99,10 @@ export default function RegisterStartupScreen({ navigation }: any) {
 
     try {
       await registerStartup(payload);
-      Alert.alert("Sucesso!", "Startup registrada com sucesso!");
+      Alert.alert(t("logs.titleSucess"), t("logs.contexRegisterStartup"));
       navigation.goBack();
     } catch (err: any) {
-      Alert.alert("Erro ao registrar", err.message);
+      Alert.alert(t("logs.titleErrorRegister"), err.message);
     }
   };
 
@@ -109,44 +111,37 @@ export default function RegisterStartupScreen({ navigation }: any) {
       <ScrollView contentContainerStyle={styles.forms}>
         <LanguageToggleButton />
 
-        <View style={{ alignItems: "center"}}>
-          <Text style={styles.titulo}>Cadastro Startup</Text>
+        <View style={{ alignItems: "center" }}>
+          <Text style={styles.titulo}>{t("titles.registerStartup")}</Text>
         </View>
 
         <View style={styles.formCorpo}>
-
           {/* CNPJ */}
-          <Field label="CNPJ" error={errors.cnpj}>
+          <Field labelKey="fields.labelCNPJ" error={errors.cnpj}>
             <MaskedTextInput
               mask="99.999.999/9999-99"
               placeholderTextColor="#888"
               keyboardType="numeric"
-              placeholder="Digite aqui o CNPJ da startup"
+              placeholder={t("fields.placeholderCNPJ")}
               value={form.cnpj}
               onChangeText={(t) => updateField("cnpj", t)}
-              style={[
-                styles.input,
-                errors.cnpj && { borderColor: "red" },
-              ]}
+              style={[styles.input, errors.cnpj && { borderColor: "red" }]}
             />
           </Field>
 
-          <Field label="Vídeo Pitch (opcional)" error={errors.video}>
+          <Field labelKey="fields.labelCNPJ" error={errors.video}>
             <TextInput
-              placeholder="URL do Pitch (YouTube, Loom, etc.)"
+              placeholder={t("fields.placeholderVideo")}
               placeholderTextColor="#888"
               value={form.video}
               onChangeText={(t) => updateField("video", t)}
-              style={[
-                styles.input,
-                errors.video && { borderColor: "red" },
-              ]}
+              style={[styles.input, errors.video && { borderColor: "red" }]}
             />
           </Field>
 
-          <Field label="Nome da Startup" error={errors.nomeStartup}>
+          <Field labelKey="fields.labelNameStartup" error={errors.nomeStartup}>
             <TextInput
-              placeholder="Digite o nome da startup"
+              placeholder={t("fields.placeholderNameStartup")}
               placeholderTextColor="#888"
               value={form.nomeStartup}
               onChangeText={(t) => updateField("nomeStartup", t)}
@@ -158,23 +153,23 @@ export default function RegisterStartupScreen({ navigation }: any) {
           </Field>
 
           {/* Site */}
-          <Field label="Site" error={errors.site}>
+          <Field labelKey="fields.labelNameWebsite" error={errors.site}>
             <TextInput
-              placeholder="https://sua-startup.com"
+              placeholder={t("fields.placeholderWebsite")}
               placeholderTextColor="#888"
               value={form.site}
               onChangeText={(t) => updateField("site", t)}
               autoCapitalize="none"
-              style={[
-                styles.input,
-                errors.site && { borderColor: "red" },
-              ]}
+              style={[styles.input, errors.site && { borderColor: "red" }]}
             />
           </Field>
 
-          <Field label="Descrição" error={errors.descricao}>
+          <Field
+            labelKey="fields.labelNameDescription"
+            error={errors.descricao}
+          >
             <TextInput
-              placeholder="Descreva sua startup"
+              placeholder={t("fields.placeholderDescription")}
               placeholderTextColor="#888"
               value={form.descricao}
               multiline
@@ -186,9 +181,9 @@ export default function RegisterStartupScreen({ navigation }: any) {
             />
           </Field>
 
-          <Field label="Email Corporativo" error={errors.emailStartup}>
+          <Field labelKey="fields.labelEmail" error={errors.emailStartup}>
             <TextInput
-              placeholder="email@suaempresa.com"
+              placeholder={t("fields.placeholderEmailStartup")}
               placeholderTextColor="#888"
               value={form.emailStartup}
               onChangeText={(t) => updateField("emailStartup", t)}
@@ -202,14 +197,12 @@ export default function RegisterStartupScreen({ navigation }: any) {
           </Field>
 
           <TouchableOpacity style={styles.button} onPress={handleRegister}>
-            <Text style={styles.textButton}>Registrar</Text>
+            <Text style={styles.textButton}>
+              {t("buttons.titleRegisterAll")}
+            </Text>
           </TouchableOpacity>
-
         </View>
-
-        
       </ScrollView>
     </SafeAreaView>
   );
 }
-

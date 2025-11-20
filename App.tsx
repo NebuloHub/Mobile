@@ -3,17 +3,20 @@ import { AuthProvider, useAuth } from "./src/context/AuthContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import AppStack from "./src/routes/AppStack";
 import AuthStack from "./src/routes/AuthStack";
-import { ThemeProvider, useTheme } from "./src/context/ThemeContext";
+import { ThemeProvider } from "./src/context/ThemeContext";
+import { LanguageProvider } from "./src/context/LanguageContext";
 
 export default function App() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <AuthProvider>
-          <NavigationContainer>
-            <MainNavigator />
-          </NavigationContainer>
-        </AuthProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <NavigationContainer>
+              <MainNavigator />
+            </NavigationContainer>
+          </AuthProvider>
+        </LanguageProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );

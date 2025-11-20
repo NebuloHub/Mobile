@@ -35,6 +35,9 @@ import { globalStyles } from "../../styles/global";
 import StarsDisplay from "../../components/StarsDisplay";
 import NewAvaliacaoForm from "../../components/NewAvaliacaoForm";
 
+import { t } from "../../i18n";
+import { useLanguage } from "../../context/LanguageContext";
+
 type Props = NativeStackScreenProps<AppStackParams, "StartupDetails">;
 
 function extractYT(url?: string | null) {
@@ -90,7 +93,7 @@ function useStartupDetails(cnpj?: string | null) {
           setAvaliacoes([]);
         }
       } catch (err: any) {
-        if (mounted) setError(err.message || "Erro ao carregar startup");
+        if (mounted) setError(err.message || t("logs.errorInvalidCPF"));
       } finally {
         if (mounted) setLoading(false);
       }
@@ -200,6 +203,8 @@ export default function StartupDetails({ route, navigation }: Props) {
   const { colors } = useTheme();
   const styles = globalStyles(colors);
 
+  const { lang } = useLanguage();
+
   const { user } = useAuth();
 
   const cnpj = route.params?.cnpj;
@@ -252,14 +257,16 @@ export default function StartupDetails({ route, navigation }: Props) {
   if (error)
     return (
       <View>
-        <Text style={styles.textButton}>Erro: {error}</Text>
+        <Text style={styles.textButton}>
+          {t("logs.titleError")} {error}
+        </Text>
       </View>
     );
 
   if (!startup)
     return (
       <View>
-        <Text style={styles.textButton}>Startup não encontrada.</Text>
+        <Text style={styles.textButton}>{t("logs.errorNotFoundStartups")}</Text>
       </View>
     );
 
@@ -284,35 +291,45 @@ export default function StartupDetails({ route, navigation }: Props) {
 
         <View style={styles.startupCard}>
           <Text style={styles.tituloHome}>{startup.nomeStartup}</Text>
-          <Text style={styles.dadosStartup}>Email: {startup.emailStartup}</Text>
-          <Text style={styles.dadosStartup}>CNPJ: {startup.cnpj}</Text>
+          <Text style={styles.dadosStartup}>
+            {t("fields.labelEmail")} {startup.emailStartup}
+          </Text>
+          <Text style={styles.dadosStartup}>
+            {t("fields.labelCNPJ")} {startup.cnpj}
+          </Text>
 
           {startup.site && (
             <TouchableOpacity
               style={styles.buttonProfile}
               onPress={() => openLink(startup.site)}
             >
-              <Text style={styles.textOutroButton}>Visitar Site</Text>
+              <Text style={styles.textOutroButton}>
+                {t("buttons.titleVisitWebsite")}
+              </Text>
             </TouchableOpacity>
           )}
         </View>
 
         <View style={[styles.startupCard, { paddingBottom: 30, gap: 30 }]}>
-          <Text style={styles.dadosStartup}>Descrição do projeto</Text>
+          <Text style={styles.dadosStartup}>
+            {t("pages.StartupDetails.titleDesc")}
+          </Text>
           <Text style={styles.textButton}>{startup.descricao}</Text>
 
-          <Text style={styles.dadosStartup}>Nome Responsável</Text>
+          <Text style={styles.dadosStartup}>
+            {t("pages.StartupDetails.titleResponsibleName")}
+          </Text>
           <Text style={styles.textButton}>{startup.nomeResponsavel}</Text>
         </View>
 
         <View style={[styles.startupCard, { gap: 16, paddingBottom: 20 }]}>
-          <Text style={styles.dadosStartup}>Habilidades</Text>
+          <Text style={styles.dadosStartup}>{t("titles.skills")}</Text>
 
           {loadingHab ? (
             <ActivityIndicator size="small" />
           ) : possuiList.length === 0 ? (
             <Text style={styles.textButton}>
-              Nenhuma habilidade cadastrada.
+              {t("titles.noSkillsRegister")}
             </Text>
           ) : (
             possuiList.map((p) => (
@@ -337,20 +354,20 @@ export default function StartupDetails({ route, navigation }: Props) {
                   <TouchableOpacity
                     onPress={() =>
                       Alert.alert(
-                        "Remover habilidade",
-                        `Remover ${p.habilidade.nomeHabilidade}?`,
+                        t("titles.removeSkill"),
+                        `${t("titles.remove")} ${p.habilidade.nomeHabilidade}?`,
                         [
-                          { text: "Cancelar", style: "cancel" },
+                          { text: t("titles.cancel"), style: "cancel" },
                           {
-                            text: "Remover",
+                            text: t("titles.remove"),
                             style: "destructive",
                             onPress: async () => {
                               try {
                                 await removeHabilidade(p.idPossui);
                               } catch {
                                 Alert.alert(
-                                  "Erro",
-                                  "Não foi possível remover a habilidade."
+                                  t("logs.titleError"),
+                                  t("logs.errorDelSkills")
                                 );
                               }
                             },
@@ -369,9 +386,8 @@ export default function StartupDetails({ route, navigation }: Props) {
           {isOwner && (
             <TouchableOpacity
               onPress={() => {
-                console.log("Abrindo modal de habilidades...");
                 if (allHabilidades.length === 0) {
-                  Alert.alert("Ops", "Nenhuma habilidade disponível.");
+                  Alert.alert(t("logs.titleOps"), t("logs.alertNoSkills"));
                   return;
                 }
                 setSelectedHab(allHabilidades[0]?.idHabilidade ?? null);
@@ -379,16 +395,18 @@ export default function StartupDetails({ route, navigation }: Props) {
               }}
             >
               <Text style={styles.textOutroButton}>
-                Adicionar nova habilidade
+                {t("buttons.titleAddSkill")}
               </Text>
             </TouchableOpacity>
           )}
         </View>
 
         <View style={styles.startupCard}>
-          <Text style={styles.tituloHome}>Notas e avaliações</Text>
+          <Text style={styles.tituloHome}>
+            {t("pages.StartupDetails.titleRates")}
+          </Text>
           <Text style={styles.dadosStartup}>
-            Avaliações criadas por usuários cadastrados no app.
+            {t("pages.StartupDetails.titleResumRate")}
           </Text>
         </View>
 
@@ -420,7 +438,7 @@ export default function StartupDetails({ route, navigation }: Props) {
                       style={styles.iconUserHome}
                     />
                     <Text style={styles.textButton}>
-                      {a.usuario?.nome ?? "Usuário"}
+                      {a.usuario?.nome ?? t("titles.user")}
                     </Text>
                   </View>
 
@@ -429,7 +447,7 @@ export default function StartupDetails({ route, navigation }: Props) {
                   </View>
 
                   <Text style={[styles.textButton, { marginTop: 6 }]}>
-                    {a.comentario || "Sem comentário"}
+                    {a.comentario || t("titles.noComment")}
                   </Text>
                 </View>
               </View>
@@ -441,13 +459,15 @@ export default function StartupDetails({ route, navigation }: Props) {
                 onPress={() => setExpanded((prev) => !prev)}
               >
                 <Text style={styles.textOutroButton}>
-                  {expanded ? "Ver menos" : "Ver todas"}
+                  {expanded ? t("buttons.seeLess") : t("buttons.seeAll")}
                 </Text>
               </TouchableOpacity>
             )}
           </>
         ) : (
-          <Text style={styles.textButton}>Nenhuma avaliação ainda.</Text>
+          <Text style={styles.textButton}>
+            {t("pages.StartupDetails.titleNoRates")}
+          </Text>
         )}
 
         {/* MODAL PARA ESCOLHER HABILIDADE */}
@@ -475,7 +495,7 @@ export default function StartupDetails({ route, navigation }: Props) {
               }}
             >
               <Text style={[styles.dadosStartup, { fontSize: 18 }]}>
-                Selecione a habilidade
+                {t("titles.selectSkill")}
               </Text>
 
               <View
@@ -487,7 +507,6 @@ export default function StartupDetails({ route, navigation }: Props) {
                 <Picker
                   selectedValue={selectedHab}
                   onValueChange={(v) => {
-                    console.log("Habilidade selecionada:", v);
                     setSelectedHab(v);
                   }}
                 >
@@ -508,21 +527,17 @@ export default function StartupDetails({ route, navigation }: Props) {
                   if (!selectedHab) return;
 
                   try {
-                    console.log("Adicionando habilidade:", selectedHab);
                     await addHabilidade(selectedHab);
-                    console.log("Habilidade adicionada!");
 
                     setModalVisible(false);
                   } catch (err) {
-                    console.log("Erro ao adicionar habilidade:", err);
-                    Alert.alert(
-                      "Erro",
-                      "Não foi possível adicionar a habilidade."
-                    );
+                    Alert.alert(t("logs.titleError"), t("logs.errorAddSkills"));
                   }
                 }}
               >
-                <Text style={styles.textOutroButton}>Adicionar</Text>
+                <Text style={styles.textOutroButton}>
+                  {t("buttons.titleAdd")}
+                </Text>
               </TouchableOpacity>
 
               {/* BOTÃO PARA CRIAR NOVA HABILIDADE */}
@@ -530,11 +545,11 @@ export default function StartupDetails({ route, navigation }: Props) {
                 style={[styles.buttonProfile, { backgroundColor: "#4b7bec" }]}
                 onPress={() => {
                   setModalVisible(false);
-                  navigation.navigate('RegisterAbility')
+                  navigation.navigate("RegisterAbility");
                 }}
               >
                 <Text style={styles.textOutroButton}>
-                  Criar nova habilidade
+                  {t("buttons.titleRegisterSkill")}
                 </Text>
               </TouchableOpacity>
 
@@ -543,7 +558,7 @@ export default function StartupDetails({ route, navigation }: Props) {
                 style={[styles.buttonProfile, { backgroundColor: "gray" }]}
                 onPress={() => setModalVisible(false)}
               >
-                <Text style={styles.textOutroButton}>Cancelar</Text>
+                <Text style={styles.textOutroButton}>{t("titles.cancel")}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -560,7 +575,7 @@ export default function StartupDetails({ route, navigation }: Props) {
           style={[styles.buttonProfile, { marginTop: 10, marginBottom: 40 }]}
           onPress={() => navigation.goBack()}
         >
-          <Text style={styles.textOutroButton}>Voltar</Text>
+          <Text style={styles.textOutroButton}>{t("buttons.titleGoBack")}</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

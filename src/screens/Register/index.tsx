@@ -8,10 +8,8 @@ import {
   ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Picker } from "@react-native-picker/picker";
 import { MaskedTextInput } from "react-native-mask-text";
 import { Ionicons } from "@expo/vector-icons";
-
 import { useAuth } from "../../context/AuthContext";
 import PasswordStrengthBar, {
   getPasswordStrength,
@@ -20,13 +18,16 @@ import { isValidEmail, isValidatePassword } from "../../utils/validators";
 import LanguageToggleButton from "../../components/LanguageToggleButton";
 import Field from "../../components/Field";
 
+import { t } from "../../i18n";
+import { useLanguage } from "../../context/LanguageContext";
+
 import { useTheme } from "../../context/ThemeContext";
 import { globalStyles } from "../../styles/global";
 
 export default function RegisterScreen({ navigation }: any) {
-
   const { colors } = useTheme();
   const styles = globalStyles(colors);
+  const { lang } = useLanguage();
 
   const { signUp } = useAuth();
 
@@ -64,24 +65,23 @@ export default function RegisterScreen({ navigation }: any) {
 
     if (cpfNumbers.length !== 11) {
       newErrors.cpf = true;
-      msg = "CPF inválido. Deve conter 11 dígitos.";
+      msg = t("logs.errorInvalidCPF");
     } else if (!form.nome.trim()) {
       newErrors.nome = true;
-      msg = "Nome é obrigatório.";
+      msg = t("logs.errorEmptyName");
     } else if (!isValidEmail(form.email)) {
       newErrors.email = true;
-      msg = "E-mail inválido.";
+      msg = t("logs.errorInvalidEmail");
     } else if (!isValidatePassword(form.senha)) {
       newErrors.senha = true;
-      msg =
-        "A senha deve conter letra maiúscula, minúscula, número, caractere especial e mínimo 8 caracteres.";
+      msg = t("logs.errorInvalidPassword");
     } else if (form.senha !== form.confirmarSenha) {
       newErrors.confirmarSenha = true;
-      msg = "As senhas não coincidem.";
+      msg = t("logs.errorInvalidPassword");
     }
 
     setErrors(newErrors);
-    if (msg) return Alert.alert("Erro", msg);
+    if (msg) return Alert.alert(t("logs.titleError"), msg);
 
     const payload = {
       cpf: cpfNumbers,
@@ -89,18 +89,15 @@ export default function RegisterScreen({ navigation }: any) {
       email: form.email,
       senha: form.senha,
       role: "USER",
-      telefone: form.telefone
-        ? Number(form.telefone.replace(/\D/g, ""))
-        : 0,
-      
+      telefone: form.telefone ? Number(form.telefone.replace(/\D/g, "")) : 0,
     };
 
     try {
       await signUp(payload);
-      Alert.alert("Sucesso!", "Conta criada com sucesso!");
+      Alert.alert(t("logs.titleSucess"), t("logs.contexSignUp"));
       navigation.navigate("Login");
     } catch (err: any) {
-      Alert.alert("Erro no cadastro", err.message);
+      Alert.alert(t("logs.titleErrorSignUp"), err.message);
     }
   };
 
@@ -109,117 +106,127 @@ export default function RegisterScreen({ navigation }: any) {
       <ScrollView contentContainerStyle={styles.forms}>
         <LanguageToggleButton />
 
-        <View style={{ alignItems: "center"}}>
-          <Text style={styles.titulo}>Criar uma conta</Text>
+        <View style={{ alignItems: "center" }}>
+          <Text style={styles.titulo}>{t("titles.SingUp")}</Text>
         </View>
 
         <View style={styles.formCorpo}>
-
-          <Field label="CPF" error={errors.cpf}>
+          <Field labelKey="fields.labelCPF" error={errors.cpf}>
             <MaskedTextInput
               mask="999.999.999-99"
               placeholderTextColor="#888"
               keyboardType="numeric"
               value={form.cpf}
               onChangeText={(t) => updateField("cpf", t)}
-              placeholder="Digite aqui seu CPF"
-              style={[styles.input,{borderColor: errors.cpf ? "red" : "#ccc"}]}
+              placeholder={t("fields.placeholderCPF")}
+              style={[
+                styles.input,
+                { borderColor: errors.cpf ? "red" : "#ccc" },
+              ]}
             />
           </Field>
 
-          <Field label="Nome" error={errors.nome}>
+          <Field labelKey="fields.labelName" error={errors.nome}>
             <TextInput
               value={form.nome}
               placeholderTextColor="#888"
               onChangeText={(t) => updateField("nome", t)}
-              placeholder="Digite aqui seu nome"
-              style={[styles.input,{
-                borderColor: errors.nome ? "red" : "#ccc",
-              }]}
+              placeholder={t("fields.placeholderName")}
+              style={[
+                styles.input,
+                {
+                  borderColor: errors.nome ? "red" : "#ccc",
+                },
+              ]}
             />
           </Field>
 
-          <Field label="Email" error={errors.email}>
+          <Field labelKey="fields.labelEmail" error={errors.email}>
             <TextInput
               value={form.email}
               placeholderTextColor="#888"
               onChangeText={(t) => updateField("email", t)}
-              placeholder="Digite aqui seu email"
+              placeholder={t("fields.placeholderEmail")}
               autoCapitalize="none"
               keyboardType="email-address"
-              style={[styles.input,{
-                borderColor: errors.email ? "red" : "#ccc",
-              }]}
+              style={[
+                styles.input,
+                {
+                  borderColor: errors.email ? "red" : "#ccc",
+                },
+              ]}
             />
           </Field>
 
-          <Field label="Telefone (opcional)" error={false}>
+          <Field labelKey="fields.labelPhone" error={false}>
             <MaskedTextInput
               mask="(99) 99999-9999"
               placeholderTextColor="#888"
               keyboardType="phone-pad"
               value={form.telefone}
               onChangeText={(t) => updateField("telefone", t)}
-              placeholder="Digite aqui seu telefone"
-              style={[styles.input,{
-                borderColor: "#ccc",
-              }]}
+              placeholder={t("fields.placeholderPhone")}
+              style={[
+                styles.input,
+                {
+                  borderColor: "#ccc",
+                },
+              ]}
             />
           </Field>
 
           <View>
-
-            <Field label="Senha" error={errors.senha}>
-            <View
-              style={[styles.passwordContainer,{
-                borderColor: errors.senha ? "red" : "#ccc",
-              }]}
-            >
-              <TextInput
-                value={form.senha}
-                placeholderTextColor="#888"
-                onChangeText={(t) => updateField("senha", t)}
-                placeholder="Digite aqui sua senha"
-                secureTextEntry={!showPass}
-                style={styles.textoSenha}
-              />
-
-
-              <TouchableOpacity onPress={() => setShowPass(!showPass)}>
-                <Ionicons
-                  name={showPass ? "eye-outline" : "eye-off-outline"}
-                  size={22}
-                  style={styles.olho}
+            <Field labelKey="fields.labelPassword" error={errors.senha}>
+              <View
+                style={[
+                  styles.passwordContainer,
+                  {
+                    borderColor: errors.senha ? "red" : "#ccc",
+                  },
+                ]}
+              >
+                <TextInput
+                  value={form.senha}
+                  placeholderTextColor="#888"
+                  onChangeText={(t) => updateField("senha", t)}
+                  placeholder={t("fields.placeholderPassword")}
+                  secureTextEntry={!showPass}
+                  style={styles.textoSenha}
                 />
-              </TouchableOpacity>
-            </View>
 
-            
-          </Field>
+                <TouchableOpacity onPress={() => setShowPass(!showPass)}>
+                  <Ionicons
+                    name={showPass ? "eye-outline" : "eye-off-outline"}
+                    size={22}
+                    style={styles.olho}
+                  />
+                </TouchableOpacity>
+              </View>
+            </Field>
 
-          <PasswordStrengthBar score={getPasswordStrength(form.senha)} />
-
+            <PasswordStrengthBar score={getPasswordStrength(form.senha)} />
           </View>
 
-          
-
-
-
-          <Field label="Confirmar Senha" error={errors.confirmarSenha}>
+          <Field labelKey="fields.labelConfirmPassword" error={errors.confirmarSenha}>
             <View
-              style={[styles.passwordContainer,{
-                borderColor: errors.confirmarSenha ? "red" : "#ccc",
-              }]}
+              style={[
+                styles.passwordContainer,
+                {
+                  borderColor: errors.confirmarSenha ? "red" : "#ccc",
+                },
+              ]}
             >
               <TextInput
                 value={form.confirmarSenha}
                 placeholderTextColor="#888"
                 onChangeText={(t) => updateField("confirmarSenha", t)}
-                placeholder="Confirme sua senha"
+                placeholder={t("fields.placeholderPassword")}
                 secureTextEntry={!showConfirmPass}
                 style={styles.textoSenha}
               />
-              <TouchableOpacity onPress={() => setShowConfirmPass(!showConfirmPass)}>
+              <TouchableOpacity
+                onPress={() => setShowConfirmPass(!showConfirmPass)}
+              >
                 <Ionicons
                   name={showConfirmPass ? "eye-outline" : "eye-off-outline"}
                   size={22}
@@ -231,17 +238,17 @@ export default function RegisterScreen({ navigation }: any) {
 
           <View>
             <TouchableOpacity style={styles.button} onPress={handleRegister}>
-              <Text style={styles.textButton}>Cadastrar</Text>
+              <Text style={styles.textButton}>{t("buttons.titleSignUp")}</Text>
             </TouchableOpacity>
           </View>
-
         </View>
 
-        
-
         <View>
-          <TouchableOpacity style={styles.outroButton}  onPress={() => navigation.navigate("Login")}>
-            <Text style={styles.textOutroButton}>Já tenho conta</Text>
+          <TouchableOpacity
+            style={styles.outroButton}
+            onPress={() => navigation.navigate("Login")}
+          >
+            <Text style={styles.textOutroButton}>{t("buttons.titleHaveAccount")}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

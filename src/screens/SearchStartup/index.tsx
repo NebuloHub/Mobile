@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { getAllStartups } from "../../api/startup";
 import { AllStartupsResponse } from "../../types/startup";
 import SearchStartupItem from "../../components/SearchStartupItem";
@@ -9,10 +18,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../context/ThemeContext";
 import { globalStyles } from "../../styles/global";
 
+import { t } from "../../i18n";
+import { useLanguage } from "../../context/LanguageContext";
+
 export default function SearchStartupScreen({ navigation }: any) {
   const [startups, setStartups] = useState<AllStartupsResponse[]>([]);
   const [filtered, setFiltered] = useState<AllStartupsResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const { lang } = useLanguage();
+
   const [refreshing, setRefreshing] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -31,12 +45,14 @@ export default function SearchStartupScreen({ navigation }: any) {
 
       if (query.trim()) {
         const termo = query.toLowerCase();
-        setFiltered(data.filter((s) => s.nomeStartup.toLowerCase().includes(termo)));
+        setFiltered(
+          data.filter((s) => s.nomeStartup.toLowerCase().includes(termo))
+        );
       } else {
         setFiltered(data);
       }
     } catch (err) {
-      console.log("Erro ao carregar startups:", err);
+      Alert.alert(`${t("logs.errorLoadingStartups")}, ${err}`);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -52,7 +68,9 @@ export default function SearchStartupScreen({ navigation }: any) {
     }
 
     const termo = text.toLowerCase();
-    setFiltered(startups.filter((s) => s.nomeStartup.toLowerCase().includes(termo)));
+    setFiltered(
+      startups.filter((s) => s.nomeStartup.toLowerCase().includes(termo))
+    );
   };
 
   if (loading) {
@@ -65,18 +83,17 @@ export default function SearchStartupScreen({ navigation }: any) {
 
   return (
     <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
-
-      <TouchableOpacity style={{padding: 15}} onPress={loadStartups}>
-        <Text style={styles.tituloHome}>Pesquisar</Text>
+      <TouchableOpacity style={{ padding: 15 }} onPress={loadStartups}>
+        <Text style={styles.tituloHome}>{t("buttons.titleSeacrh")}</Text>
       </TouchableOpacity>
 
       <View style={styles.pesquisa}>
-          <Ionicons name="search-outline" size={20} style={styles.olho}/>
-          <TextInput
-            placeholder="Pesquisar startup..."
-            value={query}
-            onChangeText={handleSearch}
-          />
+        <Ionicons name="search-outline" size={20} style={styles.olho} />
+        <TextInput
+          placeholder={t("fields.placeholderSearchStartup")}
+          value={query}
+          onChangeText={handleSearch}
+        />
       </View>
 
       <FlatList
@@ -85,14 +102,14 @@ export default function SearchStartupScreen({ navigation }: any) {
         renderItem={({ item }) => (
           <SearchStartupItem
             data={item}
-            onPress={() => navigation.navigate("StartupDetails", { cnpj: item.cnpj })}
+            onPress={() =>
+              navigation.navigate("StartupDetails", { cnpj: item.cnpj })
+            }
           />
         )}
         refreshing={refreshing}
         onRefresh={loadStartups}
-        ListEmptyComponent={
-          <Text>Nenhuma startup encontrada</Text>
-        }
+        ListEmptyComponent={<Text>{t("logs.errorNotFoundStartup")}</Text>}
       />
     </SafeAreaView>
   );

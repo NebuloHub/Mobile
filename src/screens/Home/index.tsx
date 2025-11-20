@@ -3,7 +3,6 @@ import {
   View,
   Text,
   FlatList,
-  StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
@@ -14,11 +13,16 @@ import { useAuth } from "../../context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { t } from "../../i18n";
+import { useLanguage } from "../../context/LanguageContext";
+
 import { useTheme } from "../../context/ThemeContext";
 import { globalStyles } from "../../styles/global";
 
 export default function Home({ navigation }: any) {
   const { signOut } = useAuth();
+
+  const { lang } = useLanguage();
 
   const { colors } = useTheme();
   const styles = globalStyles(colors);
@@ -36,7 +40,7 @@ export default function Home({ navigation }: any) {
       const data = await getAllStartups();
       setStartups(data);
     } catch (error) {
-      console.log("Erro ao carregar startups:", error);
+      console.log(t("logs.errorLoadingStartups"), error);
     } finally {
       setLoading(false);
     }
@@ -44,19 +48,16 @@ export default function Home({ navigation }: any) {
 
   return (
     <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
-      
       <View style={styles.headerHome}>
-
-        {/* fiz o botão de dar loading ser o nome do nosso projeto*/}
         <TouchableOpacity onPress={loadStartups}>
           <Text style={styles.tituloHome}>NebuloHub</Text>
         </TouchableOpacity>
 
         <View>
-
           <TouchableOpacity
-            onPress={() => navigation.navigate("RegisterStartup")}>
-            <Ionicons name="add-outline" size={35}  style={styles.botaoHeader}/>
+            onPress={() => navigation.navigate("RegisterStartup")}
+          >
+            <Ionicons name="add-outline" size={35} style={styles.botaoHeader} />
           </TouchableOpacity>
         </View>
       </View>

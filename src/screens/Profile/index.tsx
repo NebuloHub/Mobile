@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   Modal,
+  Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Camera } from "expo-camera";
@@ -21,9 +22,9 @@ import { UserResponse } from "../../types/usuario";
 import { useTheme } from "../../context/ThemeContext";
 import { globalStyles } from "../../styles/global";
 
-// ----------------------------------------------
-// STORAGE (somente AsyncStorage)
-// ----------------------------------------------
+import { t } from "../../i18n";
+import { useLanguage } from "../../context/LanguageContext";
+
 const PROFILE_PHOTO_KEY = "@profile_photo";
 
 async function saveProfilePhoto(uri: string) {
@@ -38,13 +39,15 @@ async function loadProfilePhoto() {
   try {
     return await AsyncStorage.getItem(PROFILE_PHOTO_KEY);
   } catch (e) {
-    console.log("Erro ao carregar foto:", e);
+    Alert.alert(`${t("logs.errorLoadPhoto")} ${e}`);
     return null;
   }
 }
 
 export default function ProfileScreen({ navigation }: any) {
   const { user } = useAuth();
+  const { lang } = useLanguage();
+
   const { colors } = useTheme();
   const styles = globalStyles(colors);
 
@@ -57,9 +60,7 @@ export default function ProfileScreen({ navigation }: any) {
   const [showZoom, setShowZoom] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
 
-  // ----------------------------------------------
-  // CARREGA DADOS DO USUÁRIO
-  // ----------------------------------------------
+
   const loadUser = useCallback(async () => {
     try {
       setLoading(true);
@@ -68,7 +69,7 @@ export default function ProfileScreen({ navigation }: any) {
       const userData = await getUserByCPF(user.cpf);
       setFullUser(userData);
     } catch (err) {
-      console.log("Erro ao carregar usuário:", err);
+      Alert.alert(`${t("logs.errorLoadUser")} ${err}`);
     } finally {
       setLoading(false);
     }
@@ -78,9 +79,6 @@ export default function ProfileScreen({ navigation }: any) {
     loadUser();
   }, [loadUser]);
 
-  // ----------------------------------------------
-  // CARREGA IMAGEM DO ASYNCSTORAGE
-  // ----------------------------------------------
   useEffect(() => {
     const loadPhoto = async () => {
       const saved = await loadProfilePhoto();
@@ -107,13 +105,10 @@ export default function ProfileScreen({ navigation }: any) {
     setShowOptions(false);
   };
 
-  // ----------------------------------------------
-  // CÂMERA
-  // ----------------------------------------------
   const takePhoto = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
     if (status !== "granted") {
-      alert("Permissão da câmera negada!");
+      alert(`${t("logs.errorLoadUser")}`);
       return;
     }
 
@@ -128,9 +123,6 @@ export default function ProfileScreen({ navigation }: any) {
     setShowOptions(false);
   };
 
-  // ----------------------------------------------
-  // REMOVER FOTO
-  // ----------------------------------------------
   const removePhoto = async () => {
     setProfileImage(defaultImage);
     await AsyncStorage.removeItem(PROFILE_PHOTO_KEY);
@@ -145,20 +137,16 @@ export default function ProfileScreen({ navigation }: any) {
     );
   }
 
-  // ----------------------------------------------
-  // RENDER
-  // ----------------------------------------------
   return (
     <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
       <ScrollView contentContainerStyle={styles.profile}>
-        {/* Card do perfil */}
         <View style={styles.profileCard}>
           <View style={styles.dadosCard}>
             <View>
               <Text style={styles.nomeCardProfile}>{fullUser.nome}</Text>
-              <Info label="Email" value={fullUser.email} />
-              <Info label="CPF" value={fullUser.cpf} />
-              <Info label="Telefone" value={fullUser.telefone || "—"} />
+              <Info label={t("fields.labelEmail")} value={fullUser.email} />
+              <Info label={t("fields.labelCPF")} value={fullUser.cpf} />
+              <Info label={t("fields.labelPhone")} value={fullUser.telefone || "—"} />
             </View>
 
             <TouchableOpacity onPress={() => setShowOptions(true)}>
@@ -170,7 +158,7 @@ export default function ProfileScreen({ navigation }: any) {
             style={styles.buttonProfile}
             onPress={() => navigation.navigate("EditProfile")}
           >
-            <Text style={styles.textOutroButton}>Editar Perfil</Text>
+            <Text style={styles.textOutroButton}>{t("buttons.titleEditUser")}</Text>
           </TouchableOpacity>
         </View>
 
@@ -186,11 +174,10 @@ export default function ProfileScreen({ navigation }: any) {
             />
           ))
         ) : (
-          <Text>Você ainda não cadastrou nenhuma Startup.</Text>
+          <Text>{t("titles.noStartupRegisters")}</Text>
         )}
       </ScrollView>
 
-      {/* Opções */}
       {showOptions && (
         <View style={styles.overlay}>
           <TouchableOpacity
@@ -199,11 +186,11 @@ export default function ProfileScreen({ navigation }: any) {
           />
 
           <View>
-            <Option label="Ver a imagem" onPress={() => setShowZoom(true)} />
-            <Option label="Trocar foto" onPress={pickImage} />
-            <Option label="Tirar foto com a câmera" onPress={takePhoto} />
-            <Option label="Remover foto" onPress={removePhoto} danger />
-            <Option label="Cancelar" onPress={() => setShowOptions(false)} />
+            <Option label={t("fields.labelSeeImg")} onPress={() => setShowZoom(true)} />
+            <Option label={t("fields.labelChangeImg")} onPress={pickImage} />
+            <Option label={t("fields.labelTakeImg")} onPress={takePhoto} />
+            <Option label={t("fields.labelRemoveImg")} onPress={removePhoto} danger />
+            <Option label={t("titles.cancel")} onPress={() => setShowOptions(false)} />
           </View>
         </View>
       )}

@@ -7,19 +7,21 @@ import { deleteUserByCPF } from "../../api/usuario";
 import { useTheme } from "../../context/ThemeContext";
 import { globalStyles } from "../../styles/global";
 import { useState } from "react";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function SettingsScreen({ navigation }: any) {
   const { signOut, user } = useAuth();
   const [openLanguage, setOpenLanguage] = useState(false);
   const [openTheme, setOpenTheme] = useState(false);
+  const { lang } = useLanguage();
 
   const { colors, setDarkTheme, setLightTheme } = useTheme();
   const styles = globalStyles(colors);
 
   const langs = [
-    { code: "pt", label: "Português (Brasil)" },
-    { code: "en", label: "Inglês (EUA)" },
-    { code: "es", label: "Espanhol" },
+    { code: "pt", label: t("components.language.titleOptionPT") },
+    { code: "en", label: t("components.language.titleOptionEN") },
+    { code: "es", label: t("components.language.titleOptionES") },
   ];
 
   const changeLanguage = (lang: string) => {
@@ -29,22 +31,22 @@ export default function SettingsScreen({ navigation }: any) {
 
   const handleDeleteUser = async () => {
     if (!user?.cpf) {
-      Alert.alert("Erro", "CPF do usuário não encontrado.");
+      Alert.alert(t("logs.titleError"), t("logs.errorNotFoundCPF"));
       return;
     }
 
-    Alert.alert("Confirmação", "Deseja realmente deletar sua conta?", [
-      { text: "Cancelar", style: "cancel" },
+    Alert.alert(t("logs.titleConfirm"), t("logs.confirmDel"), [
+      { text: t("titles.cancel"), style: "cancel" },
       {
-        text: "Deletar",
+        text: t("titles.delete"),
         style: "destructive",
         onPress: async () => {
           try {
             const res = await deleteUserByCPF(user.cpf);
-            Alert.alert("Sucesso", res.mensagem);
+            Alert.alert(t("logs.titleSucess"), res.mensagem);
             signOut();
           } catch (error) {
-            Alert.alert("Erro", "Não foi possível deletar o usuário.");
+            Alert.alert(t("logs.titleError"), t("logs.errorDelUser"));
             console.error(error);
           }
         },
@@ -66,13 +68,13 @@ export default function SettingsScreen({ navigation }: any) {
             },
           ]}
         >
-          <Text style={styles.tituloHome}>Configurações</Text>
+          <Text style={styles.tituloHome}>{t("titles.config")}</Text>
 
           <TouchableOpacity
             style={styles.buttonConfig}
             onPress={() => navigation.navigate("EditProfile")}
           >
-            <Text style={styles.textOutroButton}>Editar Perfil</Text>
+            <Text style={styles.textOutroButton}>{t("buttons.titleEditUser")}</Text>
           </TouchableOpacity>
 
           <View>
@@ -88,7 +90,7 @@ export default function SettingsScreen({ navigation }: any) {
               onPress={() => setOpenLanguage(!openLanguage)}
             >
               <Text style={styles.textOutroButton}>
-                {t("components.titleLanguage")}
+                {t("components.language.titleLanguage")}
               </Text>
               <Ionicons name="chevron-down-outline" size={24} color="#FFD700" />
             </TouchableOpacity>
@@ -118,52 +120,46 @@ export default function SettingsScreen({ navigation }: any) {
               ]}
               onPress={() => setOpenTheme(!openTheme)}
             >
-              <Text style={styles.textOutroButton}>Tema</Text>
+              <Text style={styles.textOutroButton}>{t("titles.theme")}</Text>
               <Ionicons name="chevron-down-outline" size={24} color="#FFD700" />
             </TouchableOpacity>
             {openTheme && (
               <View style={{ gap: 10, paddingHorizontal: 20 }}>
                 <TouchableOpacity onPress={setDarkTheme}>
-                  <Text style={styles.dadosStartup}>Escuro</Text>
+                  <Text style={styles.dadosStartup}>{t("titles.darkMode")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={setLightTheme}>
-                  <Text style={styles.dadosStartup}>Claro</Text>
+                  <Text style={styles.dadosStartup}>{t("titles.lightMode")}</Text>
                 </TouchableOpacity>
               </View>
             )}
           </View>
 
-          <TouchableOpacity
-            style={styles.buttonConfig}
-            onPress={() => signOut}
-          >
-            <Text style={styles.textOutroButton}>Mudar de Conta</Text>
+          <TouchableOpacity style={styles.buttonConfig} onPress={() => signOut}>
+            <Text style={styles.textOutroButton}>{t("buttons.tittleChangeAccount")}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.buttonConfig}
-            onPress={() => signOut}
-          >
-            <Text style={styles.textOutroButton}>Criar outra conta</Text>
+          <TouchableOpacity style={styles.buttonConfig} onPress={() => signOut}>
+            <Text style={styles.textOutroButton}>{t("buttons.tittleCreateOtherAccount")}</Text>
           </TouchableOpacity>
         </View>
 
         <View>
           <Text>Créditos</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('AboutUs')}>
+          <TouchableOpacity onPress={() => navigation.navigate("AboutUs")}>
             <Text>NebuloHub</Text>
           </TouchableOpacity>
         </View>
 
         <View style={[styles.formCorpo, { gap: 30 }]}>
-          <Text style={styles.dadosStartup}>Conta</Text>
+          <Text style={styles.dadosStartup}>{t("titles.account")}</Text>
 
           <TouchableOpacity
             style={[styles.buttonConfig, { borderColor: "#E60000" }]}
             onPress={handleDeleteUser}
           >
             <Text style={[styles.textOutroButton, { color: "#E60000" }]}>
-              Apagar Conta
+              {t("buttons.DeleteAccount")}
             </Text>
           </TouchableOpacity>
 
@@ -172,7 +168,7 @@ export default function SettingsScreen({ navigation }: any) {
             onPress={signOut}
           >
             <Text style={[styles.textOutroButton, { color: "#E60000" }]}>
-              Deslogar
+              {t("buttons.SignOut")}
             </Text>
           </TouchableOpacity>
         </View>

@@ -1,4 +1,7 @@
 import { View, Text } from "react-native";
+import { t, type Lang } from "../i18n";
+import { useLanguage } from "../context/LanguageContext";
+
 
 export function getPasswordStrength(password: string) {
   let score = 0;
@@ -7,10 +10,13 @@ export function getPasswordStrength(password: string) {
   if (/[a-z]/.test(password)) score++;
   if (/\d/.test(password)) score++;
   if (/[^A-Za-z0-9]/.test(password)) score++;
-  return score; // 0–5
+  return score; 
 }
 
 export default function PasswordStrengthBar({ score }: { score: number }) {
+
+  const { lang } = useLanguage();
+  
   const getColor = () => {
     if (score <= 1) return "red";
     if (score === 2) return "orange";
@@ -20,11 +26,11 @@ export default function PasswordStrengthBar({ score }: { score: number }) {
   };
 
   const getLabel = () => {
-    if (score <= 1) return "Senha muito fraca";
-    if (score === 2) return "Senha fraca";
-    if (score === 3) return "Senha média";
-    if (score === 4) return "Senha forte";
-    return "Senha muito forte";
+    if (score <= 1) return t("components.passwordStrength.level1");
+    if (score === 2) return t("components.passwordStrength.level2");
+    if (score === 3) return t("components.passwordStrength.level3");
+    if (score === 4) return t("components.passwordStrength.level4");
+    return t("components.passwordStrength.level5");
   };
 
   return (

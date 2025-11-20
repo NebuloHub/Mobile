@@ -11,8 +11,12 @@ import YoutubePlayer from "react-native-youtube-iframe";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { students } from "../../utils/students";
 import AboutUsCard from "../../components/AboutUsCard";
+import { t } from "../../i18n";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function AboutUsScreen({ navigation }: any) {
+  const { lang } = useLanguage();
+
   const openLink = useCallback(async (url?: string | null) => {
     if (!url) return;
     try {
@@ -31,10 +35,10 @@ export default function AboutUsScreen({ navigation }: any) {
             <YoutubePlayer height={220} play={false} videoId="MXidFLToZn8" />
           </View>
           <View>
-            <Text>Sobre nós</Text>
+            <Text>{t("titles.aboutUs")}</Text>
             <View>
               <View>
-                <Text>Criadores do projeto:</Text>
+                <Text>{t("titles.creators")}</Text>
                 <Text>NebuloHub</Text>
               </View>
               <Text>Turmas 2TDSPM e 2TDSPX</Text>
@@ -42,35 +46,21 @@ export default function AboutUsScreen({ navigation }: any) {
             <TouchableOpacity
               onPress={() => openLink("https://github.com/NebuloHub")}
             >
-              <Text>Visitar github</Text>
+              <Text>{t("buttons.visitGithub")}</Text>
             </TouchableOpacity>
           </View>
         </View>
         <View>
           <View>
-            <Text>Descrição do projeto</Text>
+            <Text>{t("pages.StartupDetails.titleDesc")}</Text>
           </View>
           <View>
-            <Text>
-              NebuloHub é uma plataforma inteligente dedicada à descoberta,
-              avaliação e conexão de startups. Ao se cadastrar, cada startup
-              seleciona suas habilidades e características principais, formando
-              um perfil único dentro do ecossistema. Com base em avaliações
-              públicas e no desempenho de startups semelhantes, o NebuloHub
-              utiliza Inteligência Artificial para estimar o potencial de
-              sucesso de cada negócio. Usuários comuns podem criar contas,
-              acessar um feed interativo, visualizar startups, deixar avaliações
-              em estrelas e registrar comentários, contribuindo para a formação
-              de uma comunidade ativa e colaborativa. Assim como estrelas surgem
-              dentro de nebulosas, o NebuloHub funciona como um ambiente onde
-              novas ideias ganham forma, visibilidade e direção — guiadas por
-              dados, tecnologia e avaliação coletiva.
-            </Text>
+            <Text>{t("text")}</Text>
           </View>
         </View>
         <View>
           <View>
-            <Text>Integrantes</Text>
+            <Text>{t("Members")}</Text>
           </View>
           <View>
             {students.map((aluno, index) => (
@@ -89,7 +79,7 @@ export default function AboutUsScreen({ navigation }: any) {
         <View>
           <View>
             <View>
-              <Text>Faculdade:</Text>
+              <Text>{t("titles.faculty")}</Text>
               <Text>FIAP</Text>
             </View>
             <TouchableOpacity
@@ -105,10 +95,8 @@ export default function AboutUsScreen({ navigation }: any) {
             />
           </View>
         </View>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-        >
-          <Text>Voltar</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text>{t("buttons.titleGoBack")}</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
