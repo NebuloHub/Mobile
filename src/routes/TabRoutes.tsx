@@ -7,9 +7,15 @@ import RegisterStartup from "../screens/RegisterStartup";
 import Profile from "../screens/Profile";
 import Settings from "../screens/Settings";
 
+import { useTheme } from "../context/ThemeContext";
+import { globalStyles } from "../styles/global";
+
 const Tab = createBottomTabNavigator();
 
 export default function TabRoutes() {
+
+  const { colors } = useTheme();
+  const styles = globalStyles(colors);
 
   const activeSize = 30;
   const inactiveSize = 25;
@@ -24,6 +30,10 @@ export default function TabRoutes() {
           headerShown: false,
           tabBarStyle: {
             height: 55,
+            paddingBottom:75,
+            backgroundColor: colors.background,
+            borderTopWidth: 2, 
+            borderColor: "#FFB100",
           },
         }}
       >

@@ -156,7 +156,7 @@ export default function StartupDetails({ route, navigation }: Props) {
 
           <View>
             {startup.site && (
-              <TouchableOpacity style={styles.buttonProfile} onPress={() => openLink(startup.site)}>
+              <TouchableOpacity style={[styles.buttonProfile, { marginTop: 10}]} onPress={() => openLink(startup.site)}>
                 <Text style={styles.textOutroButton}>Visitar Site</Text>
               </TouchableOpacity>
             )}
