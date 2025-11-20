@@ -72,7 +72,8 @@
     "aboutUs": "Sobre Nós",
     "creators": "Criadores do projeto:",
     "Members":"Integrantes",
-    "faculty":"Faculdade:"
+    "faculty":"Faculdade:",
+    "Credits":"Créditos"
   },
   "fields": {
     "labelSeeImg": "Ver a Image",

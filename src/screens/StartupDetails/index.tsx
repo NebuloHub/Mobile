@@ -321,8 +321,7 @@ export default function StartupDetails({ route, navigation }: Props) {
           </Text>
           <Text style={styles.textButton}>{startup.nomeResponsavel}</Text>
         </View>
-
-        <View style={[styles.startupCard, { gap: 16, paddingBottom: 20 }]}>
+        <View style={[styles.startupCard, { gap: 16, paddingBottom: 20, marginBottom: 0, }]}>
           <Text style={styles.dadosStartup}>{t("titles.skills")}</Text>
 
           {loadingHab ? (
@@ -345,7 +344,7 @@ export default function StartupDetails({ route, navigation }: Props) {
                   <Text style={styles.textButton}>
                     {p.habilidade.nomeHabilidade}
                   </Text>
-                  <Text style={styles.textButton}>
+                  <Text style={styles.olho}>
                     {p.habilidade.tipoHabilidade}
                   </Text>
                 </View>
@@ -401,19 +400,22 @@ export default function StartupDetails({ route, navigation }: Props) {
           )}
         </View>
 
-        <View style={styles.startupCard}>
-          <Text style={styles.tituloHome}>
-            {t("pages.StartupDetails.titleRates")}
-          </Text>
+        <View style={[styles.startupCard, {gap:10, paddingBottom:30, marginBottom:0, marginTop:30 }]}>
+          <Text style={styles.tituloHome}>{t("pages.StartupDetails.titleRates")}</Text>
           <Text style={styles.dadosStartup}>
             {t("pages.StartupDetails.titleResumRate")}
           </Text>
+          <Text style={[styles.tituloHome, {color: colors.text, fontSize: 50}]}>{media.toFixed(1)}</Text>
+          <StarsDisplay value={media / 2} />
+
         </View>
 
-        <View style={[styles.startupCard, { marginTop: 0 }]}>
-          <Text style={styles.tituloHome}>{media.toFixed(1)} / 10</Text>
-          <StarsDisplay value={media / 2} />
-        </View>
+        <NewAvaliacaoForm
+          startupCNPJ={startup.cnpj}
+          styles={styles}
+          colors={colors}
+          onSuccess={(newA) => prependAvaliacao(newA)}
+        />
 
         {avaliacoes.length ? (
           <>
@@ -455,10 +457,10 @@ export default function StartupDetails({ route, navigation }: Props) {
 
             {avaliacoes.length > 1 && (
               <TouchableOpacity
-                style={[styles.buttonProfile, { marginVertical: 20 }]}
+                style={{ marginVertical: 20, padding: 12 }}
                 onPress={() => setExpanded((prev) => !prev)}
               >
-                <Text style={styles.textOutroButton}>
+                <Text style={[styles.sobreCard, { textDecorationLine: "underline" }]}>
                   {expanded ? t("buttons.seeLess") : t("buttons.seeAll")}
                 </Text>
               </TouchableOpacity>
@@ -542,34 +544,31 @@ export default function StartupDetails({ route, navigation }: Props) {
 
               {/* BOTÃO PARA CRIAR NOVA HABILIDADE */}
               <TouchableOpacity
-                style={[styles.buttonProfile, { backgroundColor: "#4b7bec" }]}
+                style={[styles.buttonProfile, { borderColor: "#13E600FF" }]}
                 onPress={() => {
                   setModalVisible(false);
                   navigation.navigate("RegisterAbility");
                 }}
               >
-                <Text style={styles.textOutroButton}>
+
+                <Text style={[styles.textOutroButton, { color: "#13E600" }]}>
                   {t("buttons.titleRegisterSkill")}
                 </Text>
               </TouchableOpacity>
 
               {/* CANCELAR */}
               <TouchableOpacity
-                style={[styles.buttonProfile, { backgroundColor: "gray" }]}
+                style={[styles.buttonProfile, { borderColor: "#E60000" }]}
                 onPress={() => setModalVisible(false)}
               >
-                <Text style={styles.textOutroButton}>{t("titles.cancel")}</Text>
+
+                <Text style={[styles.textOutroButton, { color: "#E60000" }]}>{t("titles.cancel")}</Text>
               </TouchableOpacity>
             </View>
           </View>
         </Modal>
 
-        <NewAvaliacaoForm
-          startupCNPJ={startup.cnpj}
-          styles={styles}
-          colors={colors}
-          onSuccess={(newA) => prependAvaliacao(newA)}
-        />
+
 
         <TouchableOpacity
           style={[styles.buttonProfile, { marginTop: 10, marginBottom: 40 }]}

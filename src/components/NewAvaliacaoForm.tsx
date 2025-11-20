@@ -14,6 +14,7 @@ import StarsInput from "./StartsInput";
 
 import { useAuth } from "../context/AuthContext";
 import { postAvaliacao } from "../api/avaliacao";
+
 import { getUserByCPF } from "../api/usuario";
 
 import { AvaliacaoRequest, AvaliacaoResponse } from "../types/avaliacao";
@@ -80,7 +81,8 @@ export default function NewAvaliacaoForm({
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <View style={[styles.startupCard, { marginTop: 20, gap: 12 }]}>
+
+      <View style={[styles.startupCard, { marginTop: 20, gap: 12, borderBottomWidth: 0,  }]}>
         <Text style={styles.tituloHome}>{t("titles.sendRate")}</Text>
 
         <View>
@@ -99,6 +101,7 @@ export default function NewAvaliacaoForm({
               borderWidth: 1,
               paddingHorizontal: 10,
               borderRadius: 10,
+              borderColor: colors.borda,
             }}
           >
             <TextInput

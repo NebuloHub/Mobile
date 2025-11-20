@@ -72,7 +72,8 @@
     "aboutUs": "About Us",
     "creators": "Project creators:",
     "Members": "Members",
-    "faculty": "University:"
+    "faculty": "University:",
+    "Credits":"Credits"
   },
   "fields": {
     "labelSeeImg": "View Image",

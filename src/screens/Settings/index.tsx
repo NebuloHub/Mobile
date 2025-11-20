@@ -144,10 +144,18 @@ export default function SettingsScreen({ navigation }: any) {
           </TouchableOpacity>
         </View>
 
-        <View>
-          <Text>Créditos</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("AboutUs")}>
-            <Text>NebuloHub</Text>
+        <View style={[
+            styles.formCorpo,
+            {
+              gap: 30,
+              borderBottomWidth: 3,
+              borderColor: colors.borda,
+              paddingBottom: 50,
+            },
+          ]}>
+          <Text style={styles.dadosStartup}>{t("titles.Credits")}</Text>
+          <TouchableOpacity style={styles.buttonConfig} onPress={() => navigation.navigate('AboutUs')}>
+            <Text style={styles.textOutroButton}>NebuloHub</Text>
           </TouchableOpacity>
         </View>
 
