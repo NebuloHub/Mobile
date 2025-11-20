@@ -13,7 +13,7 @@ export default function TabRoutes() {
 
   const activeSize = 30;
   const inactiveSize = 25;
-  const activeColor = "#002fff";
+  const activeColor = "#FFB100";
   const inactiveColor = "#8e8e8f";
 
   return (

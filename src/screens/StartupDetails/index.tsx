@@ -15,6 +15,11 @@ import { StartupResponse } from "../../types/startup";
 import { getStartupByCNPJ } from "../../api/startup";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import YoutubePlayer from "react-native-youtube-iframe";
+
+import { useTheme } from "../../context/ThemeContext";
+import { globalStyles } from "../../styles/global";
+
 type Props = NativeStackScreenProps<AppStackParams, "StartupDetails">;
 
 const Stars = ({ value }: { value: number }) => {
@@ -48,6 +53,10 @@ function extractYT(url: string): string | null {
 }
 
 export default function StartupDetails({ route, navigation }: Props) {
+
+  const { colors } = useTheme();
+  const styles = globalStyles(colors);
+
   const { cnpj } = route.params;
 
   const [startup, setStartup] = useState<StartupResponse | null>(null);
@@ -103,63 +112,113 @@ export default function StartupDetails({ route, navigation }: Props) {
 
   const visibleAvaliacoes = expanded ? startup.avaliacoes : startup.avaliacoes.slice(0, 1);
 
+  
   return (
-    <SafeAreaView edges={["top", "bottom"]}>
+    <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
+
       <ScrollView>
+
         {videoId ? (
-          <TouchableOpacity onPress={() => openLink(startup.video)}>
-            <Image
-              source={{ uri: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` }}
+          <View style={styles.videoContainer}>
+            <YoutubePlayer
+              height={220}
+              play={false}
+              videoId={videoId}
             />
-          </TouchableOpacity>
+          </View>
+
         ) : (
           // Se você prefirir da pra trocar só para um texto falando que não tem vídeo
           <Image
             source={require("../../../assets/placeholders/video.png")}
+            style={{ width: "100%", height: 200 }}
           />
         )}
 
-        <Text>{startup.nomeStartup}</Text>
-        <Text>{startup.descricao}</Text>
+        <View style={styles.startupCard}>
+          
+            <Text style={styles.tituloHome}>{startup.nomeStartup}</Text>
+            <Text style={styles.dadosStartup}>Email:  {startup.emailStartup}</Text>
+            <Text style={styles.dadosStartup}>CNPJ: {startup.cnpj}</Text>
 
-        {startup.site && (
-          <TouchableOpacity onPress={() => openLink(startup.site)}>
-            <Text >{startup.site}</Text>
-          </TouchableOpacity>
-        )}
+          <View>
+            {startup.site && (
+              <TouchableOpacity style={styles.buttonProfile} onPress={() => openLink(startup.site)}>
+                <Text style={styles.textOutroButton}>Visitar Site</Text>
+              </TouchableOpacity>
+            )}
+
+          </View>
+
+          
+        </View>
+
+        <View style={[styles.startupCard, {paddingBottom: 30, gap:30}]}>
+
+          <View style={{gap:30}}>
+            <Text style={styles.dadosStartup}>Descrição do projeto</Text>
+            <Text style={styles.textButton}>{startup.descricao}</Text>
+
+          </View>
+
+          <View style={styles.linguagem}>
+            <Text style={styles.dadosStartup}>Nome Responsavel: </Text>
+            <Text style={styles.textButton}>{startup.nomeResponsavel}</Text>
+          </View>
+        </View>
+
 
         {startup.habilidades?.length > 0 && (
-          <View>
-            <Text>Habilidades</Text>
+          <View style={[styles.startupCard,{marginTop: 20, gap:25, paddingBottom: 40}]}>
+            <Text style={styles.dadosStartup}>Habilidades</Text>
 
-            <View>
+            <View style={{gap:15}}>
               {startup.habilidades.map((hab, index) => (
                 <View key={hab.idHabilidade ?? index}>
-                  <Text>{hab.nomeHabilidade}</Text>
-                  <Text>{hab.tipoHabilidade}</Text>
+                  <Text style={styles.textButton}>{hab.nomeHabilidade}</Text>
+                  <Text style={styles.textButton}>{hab.tipoHabilidade}</Text>
                 </View>
               ))}
             </View>
           </View>
         )}
 
-        <Text>Avaliações</Text>
-
+        <View style={[styles.startupCard, {borderBottomWidth: 0, }]}>
+          <Text style={styles.tituloHome}>Notas e avaliações</Text>
+          <Text style={styles.dadosStartup}>As notas e avaliações  são verificados e criados por usuarios ja cadastrados no aplicativo</Text>
+        </View>
+        
         {startup.avaliacoes?.length ? (
           <View>
-            <Text>Avaliação Geral</Text>
-            <Stars value={media / 2} />
-            <Text style={{ marginTop: 4 }}>
-              {media.toFixed(1)} / 10 ({startup.avaliacoes.length} avaliações)
-            </Text>
+
+            <View style={[styles.startupCard, {borderBottomWidth: 0, marginTop: 0,}]}>
+              <Text style={[styles.tituloHome, {color: colors.text,}]}>
+                {media.toFixed(1)} / 10
+              </Text>
+              <Stars value={media / 2} />
+
+            </View>
+
+
+            <View style={[styles.headerHome, {paddingHorizontal: 90}]}>
+              <Ionicons name="chatbox-ellipses-outline" size={25} style={styles.olho}/>
+              <Text style={styles.dadosStartup}>Avaliações</Text>
+              <Text style={styles.dadosStartup}>{startup.avaliacoes.length}</Text>
+            </View>
+            
 
             {visibleAvaliacoes.map((a, index) => (
-              <View key={a.idAvaliacao ?? index}>
-                <Text>
-                  {a.usuario?.nome ?? "Usuário"}
-                </Text>
+              <View style={[styles.startupCard, {borderBottomWidth: 0, marginTop: 10,}]} key={a.idAvaliacao ?? index}>
+
+                <View style={{flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 5,}}>
+                  <Ionicons name="person-circle-outline" size={25}  style={styles.iconUserHome}/>
+                  <Text style={styles.textButton}>
+                    {a.usuario?.nome ?? "Usuário"}
+                  </Text>
+                </View>
+                
                 <Stars value={a.nota / 2} />
-                <Text >
+                <Text style={styles.textButton}>
                   {a.comentario || "Sem comentário"}
                 </Text>
               </View>
@@ -169,10 +228,10 @@ export default function StartupDetails({ route, navigation }: Props) {
           <Text>Nenhuma avaliação ainda.</Text>
         )}
 
-        <TouchableOpacity
+        <TouchableOpacity style={[styles.buttonProfile, {marginBottom: 40,  marginTop: 10}]}
           onPress={() => navigation.goBack()}
         >
-          <Text>Voltar</Text>
+          <Text style={styles.textOutroButton}>Voltar</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
