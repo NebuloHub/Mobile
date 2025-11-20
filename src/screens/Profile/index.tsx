@@ -35,7 +35,6 @@ export default function ProfileScreen({ navigation }: any) {
   const [showZoom, setShowZoom] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
 
-  //   Funções de carregamento
   const loadUser = useCallback(async () => {
     try {
       setLoading(true);
@@ -55,8 +54,8 @@ export default function ProfileScreen({ navigation }: any) {
   }, [loadUser]);
 
   const pickImage = async () => {
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ["images"],
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.8,
     });
 
@@ -86,7 +85,6 @@ export default function ProfileScreen({ navigation }: any) {
     setShowOptions(false);
   };
 
-  //   Loading
   if (loading || !fullUser) {
     return (
       <View>
@@ -97,14 +95,10 @@ export default function ProfileScreen({ navigation }: any) {
 
   return (
     <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
-
       <ScrollView contentContainerStyle={styles.profile}>
-
         {/* Card do perfil */}
         <View style={styles.profileCard}>
-
           <View style={styles.dadosCard}>
-
             <View>
               <Text style={styles.nomeCardProfile}>{fullUser.nome}</Text>
               <Info label="Email" value={fullUser.email} />
@@ -112,22 +106,18 @@ export default function ProfileScreen({ navigation }: any) {
               <Info label="Telefone" value={fullUser.telefone || "—"} />
             </View>
 
-
             <View>
               <TouchableOpacity onPress={() => setShowOptions(true)}>
                 <Image source={profileImage} style={styles.profileImage} />
               </TouchableOpacity>
-
             </View>
-
           </View>
 
-            <View>
-              <TouchableOpacity style={styles.buttonProfile}>
-                <Text style={styles.textOutroButton}>Editar Perfil</Text>
-              </TouchableOpacity>
-            </View>
-          
+          <View>
+            <TouchableOpacity style={styles.buttonProfile}>
+              <Text style={styles.textOutroButton}>Editar Perfil</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Startups */}
@@ -183,12 +173,22 @@ export default function ProfileScreen({ navigation }: any) {
   );
 }
 
-
 function Info({ label, value }: any) {
   return (
-    <View style={{ flexDirection: "row", gap: 5, paddingVertical: 3, marginVertical: 5 }}>
-      <Text style={{color: "#5D5D5D", fontSize: 15, fontWeight: "bold",}}>{label}:</Text>
-      <Text style={{color: "#5D5D5D", fontSize: 15, fontWeight: "bold",}}>{value}</Text>
+    <View
+      style={{
+        flexDirection: "row",
+        gap: 5,
+        paddingVertical: 3,
+        marginVertical: 5,
+      }}
+    >
+      <Text style={{ color: "#5D5D5D", fontSize: 15, fontWeight: "bold" }}>
+        {label}:
+      </Text>
+      <Text style={{ color: "#5D5D5D", fontSize: 15, fontWeight: "bold" }}>
+        {value}
+      </Text>
     </View>
   );
 }
