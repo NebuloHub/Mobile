@@ -10,18 +10,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const themeColors = {
   light: {
-    background: '#fff',
-    text: '#000',
-    buttonText: '#000000',
-    borda: '#000000',
-    titulo: '#000000',
+    background: "#fff",
+    text: "#000",
+    buttonText: "#000000",
+    borda: "#000000",
+    titulo: "#000000",
   },
   dark: {
-    background: '#212121',
-    text: '#5D5D5D',
-    buttonText: '#ffffff',
-    borda: '#5D5D5D',
-    titulo: '#FFFFFF',
+    background: "#212121",
+    text: "#5D5D5D",
+    buttonText: "#ffffff",
+    borda: "#5D5D5D",
+    titulo: "#FFFFFF",
   },
 };
 
@@ -29,6 +29,8 @@ type ThemeContextType = {
   theme: ColorSchemeName;
   colors: typeof themeColors.light;
   toggleTheme: () => void;
+  setLightTheme: () => void;
+  setDarkTheme: () => void;
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -75,10 +77,18 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
+  const setLightTheme = () => {
+    setTheme("light");
+  };
+
+  const setDarkTheme = () => {
+    setTheme("dark");
+  };
+
   const colors = theme === "light" ? themeColors.light : themeColors.dark;
 
   return (
-    <ThemeContext.Provider value={{ theme, colors, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, colors, toggleTheme, setLightTheme, setDarkTheme }}>
       {children}
     </ThemeContext.Provider>
   );

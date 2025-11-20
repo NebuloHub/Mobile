@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
-import i18n, { setLocale } from "../i18n";
-import { t } from '../i18n'
+import { setLocale, t } from "../i18n";
 
 import { useTheme } from "../context/ThemeContext";
 import { globalStyles } from "../styles/global";
@@ -12,7 +11,6 @@ export default function LanguageSelector() {
 
   const { colors } = useTheme();
   const styles = globalStyles(colors);
-
 
   const langs = [
     { code: "pt", label: "Português (BR)" },
