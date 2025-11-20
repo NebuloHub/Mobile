@@ -12,13 +12,10 @@ import { Ionicons } from "@expo/vector-icons";
 
 import StarsInput from "./StartsInput";
 
-// 👉 ajustar o caminho
 import { useAuth } from "../context/AuthContext";
 
-// 👉 ajustar o caminho
 import { postAvaliacao } from "../api/avaliacao";
 
-// 👉 ajustar o caminho
 import { getUserByCPF } from "../api/usuario";
 
 import { AvaliacaoRequest, AvaliacaoResponse } from "../types/avaliacao";
@@ -81,7 +78,7 @@ export default function NewAvaliacaoForm({
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <View style={[styles.startupCard, { marginTop: 20, gap: 12 }]}>
+      <View style={[styles.startupCard, { marginTop: 20, gap: 12, borderBottomWidth: 0,  }]}>
         <Text style={styles.tituloHome}>Enviar Avaliação</Text>
 
         <View>
@@ -100,6 +97,7 @@ export default function NewAvaliacaoForm({
               borderWidth: 1,
               paddingHorizontal: 10,
               borderRadius: 10,
+              borderColor: colors.borda,
             }}
           >
             <TextInput
