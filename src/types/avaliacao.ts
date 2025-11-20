@@ -15,7 +15,7 @@ export interface AvaliacaoResponse{
     nota:number;
     comentario:string;
     usuarioCPF?:UserResponse["cpf"];
-    usuario?:UserResponse;
+    usuario?:UserResponse | null;
     startupCNPJ?:StartupResponse["cnpj"];
 }
 
