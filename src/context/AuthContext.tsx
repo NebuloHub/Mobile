@@ -23,13 +23,10 @@ interface AuthContextData {
   user: UsuarioAuth | null;
   token: string | null;
   loading: boolean;
-
   signIn: (data: LoginRequest) => Promise<void>;
   signOut: () => Promise<void>;
   signUp: (data: UserResponse) => Promise<void>;
-
-  // 🔥 Necessário para editar perfil
-  setUser: React.Dispatch<React.SetStateAction<UsuarioAuth | null>>;
+  updateUserData: (data: UsuarioAuth | UserResponse) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextData | undefined>(undefined);
@@ -41,9 +38,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const [logoutTimer, setLogoutTimer] = useState<NodeJS.Timeout | null>(null);
 
-  // ---------------------------------------------------------
-  // ⏳ Configura logout automático baseado no tempo restante
-  // ---------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // 🔥 Agenda logout automático
+  // ---------------------------------------------------------------------------
   const scheduleLogout = (expiresAt: number) => {
     const timeLeft = expiresAt - Date.now();
 
@@ -62,9 +59,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLogoutTimer(timer);
   };
 
-  // ---------------------------------------------------------
-  // 🔄 Carrega dados do storage na inicialização
-  // ---------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // 🔥 Carregar sessão do AsyncStorage
+  // ---------------------------------------------------------------------------
   useEffect(() => {
     const loadStorage = async () => {
       try {
@@ -95,9 +92,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loadStorage();
   }, []);
 
-  // ---------------------------------------------------------
-  // 🔐 Login
-  // ---------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // 🔥 Login
+  // ---------------------------------------------------------------------------
   const signIn = async ({ email, senha }: LoginRequest) => {
     const response: LoginResponse = await login({ email, senha });
 
@@ -106,7 +103,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const authUser: UsuarioAuth = {
       ...response.usuario,
-      cpf: decoded.cpf, // vindo do token
+      cpf: decoded.cpf, // CPF sempre vem do token
     };
 
     const expiresAt =
@@ -123,9 +120,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     scheduleLogout(expiresAt);
   };
 
-  // ---------------------------------------------------------
-  // 🚪 Logout
-  // ---------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // 🔥 Logout
+  // ---------------------------------------------------------------------------
   const signOut = async () => {
     setUser(null);
     setToken(null);
@@ -136,9 +133,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await AsyncStorage.multiRemove(["@token", "@user", "@expiresAt"]);
   };
 
-  // ---------------------------------------------------------
-  // 🆕 Registro
-  // ---------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // 🔥 Cadastro
+  // ---------------------------------------------------------------------------
   const signUp = async (data: UserResponse) => {
     try {
       return await register(data);
@@ -152,9 +149,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // ---------------------------------------------------------
-  // 🧠 Provider
-  // ---------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // 🔥 Atualizar dados do usuário (EditProfile)
+  // ---------------------------------------------------------------------------
+  const updateUserData = async (
+    data: UsuarioAuth | UserResponse
+  ) => {
+    setUser(data as UsuarioAuth);
+    await AsyncStorage.setItem("@user", JSON.stringify(data));
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -164,7 +168,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signIn,
         signOut,
         signUp,
-        setUser, // 🔥 agora disponível no useAuth()
+        updateUserData, 
       }}
     >
       {children}
@@ -172,9 +176,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// ---------------------------------------------------------
-// 🔥 Hook customizado
-// ---------------------------------------------------------
 export const useAuth = () => {
   const context = useContext(AuthContext);
 
