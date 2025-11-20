@@ -310,4 +310,33 @@ export const globalStyles= (colors: typeof themeColors.light) => StyleSheet.crea
       marginHorizontal: 15,
     },
 
+
+    //----------------------------------------------------
+    //                    Startup
+    //----------------------------------------------------
+
+    videoContainer: {
+        width: "100%",
+        borderBottomEndRadius: 20,
+        borderBottomStartRadius: 20,
+        overflow: "hidden", // importante para arredondar o player
+        marginTop: 10,
+    },
+
+    dadosStartup: {
+        color: "#5D5D5D", 
+        fontSize: 15, 
+        fontWeight: "bold",
+    },
+
+    startupCard: {
+        borderBottomWidth: 2, 
+        borderBottomColor: colors.borda, 
+        paddingBottom: 15, 
+        marginBottom: 15,
+        marginTop: 50, 
+        paddingHorizontal: 15, 
+        gap:10,
+    },
+
 })
