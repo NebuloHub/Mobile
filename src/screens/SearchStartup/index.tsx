@@ -6,12 +6,18 @@ import SearchStartupItem from "../../components/SearchStartupItem";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useTheme } from "../../context/ThemeContext";
+import { globalStyles } from "../../styles/global";
+
 export default function SearchStartupScreen({ navigation }: any) {
   const [startups, setStartups] = useState<AllStartupsResponse[]>([]);
   const [filtered, setFiltered] = useState<AllStartupsResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [query, setQuery] = useState("");
+
+  const { colors } = useTheme();
+  const styles = globalStyles(colors);
 
   useEffect(() => {
     loadStartups();
@@ -58,23 +64,19 @@ export default function SearchStartupScreen({ navigation }: any) {
   }
 
   return (
-    <SafeAreaView edges={["top", "bottom"]}>
-      <View>
-        <View>
-          <TouchableOpacity onPress={loadStartups}>
-            <Ionicons name="refresh-outline" size={22} color="#007bff" />
-          </TouchableOpacity>
-        </View>
+    <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
 
-        <View>
-          <Ionicons name="search-outline" size={20} color="#555"/>
+      <TouchableOpacity style={{padding: 15}} onPress={loadStartups}>
+        <Text style={styles.tituloHome}>Pesquisar</Text>
+      </TouchableOpacity>
+
+      <View style={styles.pesquisa}>
+          <Ionicons name="search-outline" size={20} style={styles.olho}/>
           <TextInput
             placeholder="Pesquisar startup..."
             value={query}
             onChangeText={handleSearch}
           />
-        </View>
-
       </View>
 
       <FlatList

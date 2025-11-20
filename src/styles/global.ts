@@ -340,4 +340,54 @@ export const globalStyles= (colors: typeof themeColors.light) => StyleSheet.crea
 
     },
 
+
+    //----------------------------------------------------
+    //                      Pesquisar
+    //----------------------------------------------------
+
+    pesquisa: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: 15,
+        backgroundColor: "#626262",
+        color: colors.text,
+        margin: 15,
+        borderRadius: 8,
+    },
+
+    //----------------------------------------------------
+    //                Componente Pesquisa
+    //----------------------------------------------------
+
+    cardPesquisa: {
+        padding: 20,
+        borderRadius: 10,
+        borderBottomWidth: 1,
+        borderColor: "#FFB100",
+        marginVertical: 12,
+    },
+
+    title: {
+        fontSize: 17,
+        fontWeight: "700",
+        marginBottom: 6,
+    },
+
+    row: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+
+    commentsRow: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+
+    commentsText: {
+        marginLeft: 4,
+        fontSize: 14,
+        fontWeight: "500",
+        color: "#333",
+    },
+
 })

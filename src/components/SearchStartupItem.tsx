@@ -6,6 +6,9 @@ import { AllStartupsResponse, StartupResponse } from "../types/startup";
 import { AvaliacaoResponse } from "../types/avaliacao";
 import { getStartupByCNPJ } from "../api/startup";
 
+import { useTheme } from "../context/ThemeContext";
+import { globalStyles } from "../styles/global";
+
 interface Props {
   data: AllStartupsResponse;
   onPress?: () => void;
@@ -14,6 +17,9 @@ interface Props {
 export default function SearchStartupItem({ data, onPress }: Props) {
   const [avaliacoes, setAvaliacoes] = useState<AvaliacaoResponse[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const { colors } = useTheme();
+  const styles = globalStyles(colors);
 
   useEffect(() => {
     const load = async () => {
@@ -51,8 +57,8 @@ export default function SearchStartupItem({ data, onPress }: Props) {
   }
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress}>
-      <Text style={styles.title}>{data.nomeStartup}</Text>
+    <TouchableOpacity style={styles.cardPesquisa} onPress={onPress}>
+      <Text style={styles.textButton}>{data.nomeStartup}</Text>
 
       {loading ? (
         <ActivityIndicator size="small" />
@@ -61,7 +67,7 @@ export default function SearchStartupItem({ data, onPress }: Props) {
           <View style={styles.stars}>{renderStars()}</View>
 
           <View style={styles.commentsRow}>
-            <Ionicons name="chatbox-ellipses-outline" size={18} color="#444" />
+            <Ionicons name="chatbox-ellipses-outline" size={18} style={styles.olho} />
             <Text style={styles.commentsText}>{totalComentarios}</Text>
           </View>
         </View>
@@ -69,37 +75,3 @@ export default function SearchStartupItem({ data, onPress }: Props) {
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    padding: 14,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    marginBottom: 12,
-  },
-  title: {
-    fontSize: 17,
-    fontWeight: "700",
-    marginBottom: 6,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  stars: {
-    flexDirection: "row",
-    marginRight: 12,
-  },
-  commentsRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  commentsText: {
-    marginLeft: 4,
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#333",
-  },
-});
