@@ -5,6 +5,7 @@ import StartupDetails from '../screens/StartupDetails';
 import RegisterStartup from '../screens/RegisterStartup';
 import EditProfile from '../screens/EditProfile';
 import ChangePassword from '../screens/ChangePassword';
+import AboutUs from '../screens/AboutUs';
 import { AppStackParams } from '../types/navigation';
 
 const Stack = createNativeStackNavigator<AppStackParams>();
@@ -18,6 +19,7 @@ export default function AppStack() {
         <Stack.Screen name="RegisterStartup" component={RegisterStartup} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="ChangePassword" component={ChangePassword} />
+        <Stack.Screen name="AboutUs" component={AboutUs} />
       </Stack.Navigator>
     </SafeAreaProvider>
   );

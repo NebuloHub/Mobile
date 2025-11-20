@@ -4,10 +4,6 @@ import { themeColors } from "../context/ThemeContext";
 
 export const globalStyles= (colors: typeof themeColors.light) => StyleSheet.create({
 
-    //----------------------------------------------------
-    //                      FORMS
-    //----------------------------------------------------
-
     pagina: {
         backgroundColor: colors.background,
         minHeight: "100%",

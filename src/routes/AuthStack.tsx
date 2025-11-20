@@ -1,4 +1,3 @@
-// src/navigation/AuthStack.tsx
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import LoginScreen from '../screens/Login';

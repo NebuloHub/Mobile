@@ -4,4 +4,5 @@ export type AppStackParams = {
   RegisterStartup: undefined;
   EditProfile:undefined;
   ChangePassword:undefined;
+  AboutUs:undefined;
 };

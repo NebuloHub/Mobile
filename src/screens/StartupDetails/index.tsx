@@ -148,7 +148,7 @@ function useStartupHabilidades(cnpj?: string | null) {
         if (!mounted) return;
         setPossuiList(p);
 
-        const habs = await getAllHabilidades(100);
+        const habs = await getAllHabilidades(20);
         if (!mounted) return;
         const items = (habs && (habs.items ?? habs)) || [];
         setAllHabilidades(
@@ -202,9 +202,6 @@ function useStartupHabilidades(cnpj?: string | null) {
   };
 }
 
-/* -------------------------
- * Pequenos componentes/Helpers de UI (mantidos inline - refatoração leve)
- * ------------------------- */
 function StarsDisplay({ value, size = 18 }: { value: number; size?: number }) {
   const full = Math.floor(value);
   const half = value % 1 >= 0.5;
@@ -232,9 +229,6 @@ function StarsInput({ rating, setRating, max = 10 }: { rating: number; setRating
   );
 }
 
-/* -------------------------
- * Formulário de avaliação (mantido)
- * ------------------------- */
 function NewAvaliacaoForm({
   startupCNPJ,
   onSuccess,
@@ -323,9 +317,6 @@ function NewAvaliacaoForm({
   );
 }
 
-/* -------------------------
- * Componente principal (refatorado levemente)
- * ------------------------- */
 export default function StartupDetails({ route, navigation }: Props) {
   const { colors } = useTheme();
   const styles = globalStyles(colors);
@@ -337,7 +328,6 @@ export default function StartupDetails({ route, navigation }: Props) {
   const { user } = useAuth();
   const isOwner = !!(startup?.usuarioCPF && user?.cpf && startup.usuarioCPF === user.cpf);
 
-  // estados UI (tudo no topo)
   const [showSkillPicker, setShowSkillPicker] = useState<boolean>(false);
   const [selectedSkillId, setSelectedSkillId] = useState<number | null>(null);
   const [expandedAval, setExpandedAval] = useState<boolean>(false);
@@ -401,7 +391,6 @@ export default function StartupDetails({ route, navigation }: Props) {
 
   const visibleAvaliacoes = expandedAval ? avaliacoes : avaliacoes.slice(0, 1);
 
-  /* handlers de habilidades (UI) */
   const handleOpenPicker = useCallback(() => {
     setSelectedSkillId(null);
     setShowSkillPicker(true);
@@ -431,7 +420,7 @@ export default function StartupDetails({ route, navigation }: Props) {
   return (
     <SafeAreaView edges={["top", "bottom"]} style={styles.pagina}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
-        {/* Vídeo / placeholder */}
+  
         {videoId ? (
           <View style={styles.videoContainer}>
             <YoutubePlayer height={220} play={false} videoId={videoId} />
