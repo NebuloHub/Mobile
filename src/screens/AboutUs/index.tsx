@@ -55,7 +55,7 @@ export default function AboutUsScreen({ navigation }: any) {
             <Text>{t("pages.StartupDetails.titleDesc")}</Text>
           </View>
           <View>
-            <Text>{t("text")}</Text>
+            <Text>{t("pages.text")}</Text>
           </View>
         </View>
         <View>
