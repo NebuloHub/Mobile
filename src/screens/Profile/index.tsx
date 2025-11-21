@@ -142,7 +142,7 @@ export default function ProfileScreen({ navigation }: any) {
       <ScrollView contentContainerStyle={styles.profile}>
         <View style={styles.profileCard}>
           <View style={styles.dadosCard}>
-            <View style={{ paddingHorizontal: 10 }}>
+            <View >
               <Text style={styles.nomeCardProfile}>{fullUser.nome}</Text>
               <Info label={t("fields.labelEmail")} value={fullUser.email} />
               <Info label={t("fields.labelCPF")} value={fullUser.cpf} />
