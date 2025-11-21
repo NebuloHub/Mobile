@@ -77,10 +77,9 @@ export default function SettingsScreen({ navigation }: any) {
             <Text style={styles.textOutroButton}>{t("buttons.titleEditUser")}</Text>
           </TouchableOpacity>
 
-          <View>
+          <View style={[styles.buttonConfig, {gap: 20}]}>
             <TouchableOpacity
               style={[
-                styles.buttonConfig,
                 {
                   flexDirection: "row",
                   justifyContent: "space-between",
@@ -108,10 +107,9 @@ export default function SettingsScreen({ navigation }: any) {
             )}
           </View>
 
-          <View>
+          <View style={[styles.buttonConfig, {gap: 20}]}>
             <TouchableOpacity
               style={[
-                styles.buttonConfig,
                 {
                   flexDirection: "row",
                   justifyContent: "space-between",
