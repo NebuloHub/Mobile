@@ -283,10 +283,12 @@ export default function StartupDetails({ route, navigation }: Props) {
             <YoutubePlayer height={220} play={false} videoId={videoId} />
           </View>
         ) : (
-          <Image
-            source={require("../../../assets/placeholders/video.png")}
-            style={{ width: "100%", height: 200 }}
-          />
+          <View style={styles.videoContainer}>
+            <Image
+              source={require("../../../assets/placeholders/video.png")}
+              style={{ width: "100%", height: 200}}
+            />
+          </View>
         )}
 
         <View style={styles.startupCard}>
