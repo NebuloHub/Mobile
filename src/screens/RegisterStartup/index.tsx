@@ -129,7 +129,7 @@ export default function RegisterStartupScreen({ navigation }: any) {
             />
           </Field>
 
-          <Field labelKey="fields.labelCNPJ" error={errors.video}>
+          <Field labelKey="fields.labelVideo" error={errors.video}>
             <TextInput
               placeholder={t("fields.placeholderVideo")}
               placeholderTextColor="#888"
