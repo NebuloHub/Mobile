@@ -88,7 +88,7 @@ export default function SearchStartupScreen({ navigation }: any) {
       </TouchableOpacity>
 
       <View style={styles.pesquisa}>
-        <Ionicons name="search-outline" size={20} style={styles.olho} />
+        <Ionicons name="search-outline" size={20} style={{ color: "#000" }} />
         <TextInput
           placeholder={t("fields.placeholderSearchStartup")}
           value={query}

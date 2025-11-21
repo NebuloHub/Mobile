@@ -484,7 +484,7 @@ export default function StartupDetails({ route, navigation }: Props) {
           <View
             style={{
               flex: 1,
-              backgroundColor: "rgba(0,0,0,0.5)",
+              backgroundColor: "rgba(0,0,0,0.9)",
               alignItems: "center",
               justifyContent: "center",
               padding: 20,
@@ -498,17 +498,20 @@ export default function StartupDetails({ route, navigation }: Props) {
                 gap: 16,
               }}
             >
-              <Text style={[styles.dadosStartup, { fontSize: 18 }]}>
+              <Text style={styles.textOutroButton}>
                 {t("titles.selectSkill")}
               </Text>
 
               <View
                 style={{
-                  borderWidth: 1,
-                  borderRadius: 8,
+                  borderWidth: 2,
+                  borderRadius: 20,
+                  borderColor: "#FFB100",
                 }}
               >
                 <Picker
+                  style={styles.picker}
+                  dropdownIconColor="#FFB100" 
                   selectedValue={selectedHab}
                   onValueChange={(v) => {
                     setSelectedHab(v);
@@ -516,6 +519,7 @@ export default function StartupDetails({ route, navigation }: Props) {
                 >
                   {allHabilidades.map((h) => (
                     <Picker.Item
+                      style={styles.item}
                       key={h.idHabilidade}
                       label={`${h.nomeHabilidade} (${h.tipoHabilidade})`}
                       value={h.idHabilidade}

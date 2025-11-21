@@ -421,4 +421,20 @@ export const globalStyles= (colors: typeof themeColors.light) => StyleSheet.crea
       gap:20,
       width: 220,
     },
+
+    //----------------------------------------------------
+    //                    Picker Startup
+    //----------------------------------------------------
+
+
+
+    picker: {
+        height: 50,
+        color: "#FFB100", // cor do texto (iOS funciona; Android às vezes ignora)
+        fontSize: 16,
+    },
+    item: {
+        fontSize: 16,
+        color: "#000",
+    },
 })
