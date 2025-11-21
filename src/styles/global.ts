@@ -399,4 +399,26 @@ export const globalStyles= (colors: typeof themeColors.light) => StyleSheet.crea
       borderRadius: 20,
     },
 
+    
+    //----------------------------------------------------
+    //                     Card sobre
+    //----------------------------------------------------
+
+    imageCardSobre: {
+      backgroundColor: "#FFB100",
+      paddingHorizontal: 12,
+      paddingTop: 20,
+      borderTopLeftRadius: 20,
+      borderBottomLeftRadius: 20,
+    },
+
+    infoCardSobre: {
+      backgroundColor: "#2F2F2F",
+      paddingHorizontal:50,
+      paddingTop:10,
+      borderTopRightRadius: 20,
+      borderBottomRightRadius: 20,
+      gap:20,
+      width: 220,
+    },
 })

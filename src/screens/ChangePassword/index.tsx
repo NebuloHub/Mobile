@@ -102,7 +102,7 @@ export default function ChangePasswordScreen({ navigation }: any) {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.button}
+          style={styles.outroButton}
           onPress={() => navigation.goBack()}
         >
           <Text style={styles.textButton}>{t("titles.cancel")}</Text>
