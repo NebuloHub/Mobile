@@ -254,7 +254,35 @@ export const globalStyles= (colors: typeof themeColors.light) => StyleSheet.crea
 
     overlayBackground: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: "rgba(0,0,0,0.3)",
+        backgroundColor: "rgba(0,0,0,0.6)",
+    },
+
+    optionsContainer: {
+        padding: 20,
+        borderRadius: 12,
+        width: 250,
+        alignSelf: "center",
+        gap: 15,
+        elevation: 6, // sombra Android
+        shadowColor: "#000",
+        shadowOpacity: 0.15,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 4,
+    },
+
+    optionButton: {
+        paddingVertical: 10,
+    },
+
+    optionText: {
+        fontSize: 16,
+        color: "#fff",
+        fontWeight: "bold",
+    },
+
+    optionDanger: {
+        color: "red",
+        fontWeight: "bold",
     },
 
     zoomContainer: {

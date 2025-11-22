@@ -174,7 +174,7 @@ export default function ProfileScreen({ navigation }: any) {
             />
           ))
         ) : (
-          <Text>{t("titles.noStartupRegisters")}</Text>
+          <Text style={styles.textButton}>{t("titles.noStartupRegisters")}</Text>
         )}
       </ScrollView>
 
@@ -185,7 +185,7 @@ export default function ProfileScreen({ navigation }: any) {
             onPress={() => setShowOptions(false)}
           />
 
-          <View>
+          <View style={styles.optionsContainer}> 
             <Option label={t("fields.labelSeeImg")} onPress={() => setShowZoom(true)} />
             <Option label={t("fields.labelChangeImg")} onPress={pickImage} />
             <Option label={t("fields.labelTakeImg")} onPress={takePhoto} />
@@ -237,9 +237,16 @@ function Info({ label, value }: any) {
 }
 
 function Option({ label, onPress, danger }: any) {
+
+  const { colors } = useTheme();
+  const styles = globalStyles(colors);
+
   return (
-    <TouchableOpacity onPress={onPress}>
-      <Text style={[danger && { color: "red" }]}>{label}</Text>
+    <TouchableOpacity style={styles.optionButton} onPress={onPress}>
+      <Text style={[
+          styles.optionText,
+          danger && styles.optionDanger
+        ]}>{label}</Text>
     </TouchableOpacity>
   );
 }
