@@ -17,7 +17,7 @@ Assim como estrelas surgem dentro de nebulosas, o NebuloHub funciona como um amb
 
 ---
 
-Este projeto é a solução desenvolvida para o Global Solution de "Mobile" da FIAP.
+Este projeto é a solução desenvolvida para o Global Solution de "Devops" usando .NET da FIAP.
 
 **Integrantes:**
 * Vicenzo Massao - 554833 - 2TDSPM
@@ -28,6 +28,6 @@ Este projeto é a solução desenvolvida para o Global Solution de "Mobile" da F
 
 
 **Link do Vídeo da Apresentação:**
-
+[Link do Video de Devops]()
 
 ---
