@@ -28,6 +28,7 @@ Este projeto é a solução desenvolvida para o Global Solution de "Devops" usan
 
 
 **Link do Vídeo da Apresentação:**
-[Link do Video de Devops]()
+[Link do Video de Mobile](
+https://youtu.be/ZzcnjFcsnSU)
 
 ---
